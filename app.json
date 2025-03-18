@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d770525d-c307-400d-955a-850fdf571386"
+      }
+    },
+    "owner": "yetiherrera"
   }
 }
