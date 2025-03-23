@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "easy-licence",
-    "slug": "easy-licence",
+    "name": "easy-license",
+    "slug": "easy-license",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

@@ -6,6 +6,7 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 const primary = '#573CFA';
+const primaryDark = '#0a7ea4';
 const secondary = '#FB8D1A';
 const danger = '#E8083E';
 const success = '#02864A';
@@ -19,6 +20,10 @@ export const Colors = {
     icon: neutral,
     tabIconDefault: neutral,
     tabIconSelected: tintColorLight,
+    primaryTitles: tintColorLight,
+    formInputBackground: '#ededed',
+    formInputBorder: '#9c9a9a',
+    placeholderTextColor: '#8E8E93',
     primary,
     secondary,
     danger,
@@ -32,6 +37,10 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    primaryTitles: tintColorDark,
+    formInputBackground: '#1e1d24',
+    formInputBorder: '#2c2b36',
+    placeholderTextColor: '#8E8E93',
     primary,
     secondary,
     danger,

@@ -128,7 +128,7 @@ export function OnboardingScreen() {
   };
 
   const handleGetStarted = () => {
-    router.replace('/(tabs)' as any);
+    router.replace('/auth' as any);
   };
 
   const handleLanguageChange = async (language: 'en' | 'es') => {
