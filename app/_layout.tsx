@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { loadSavedLanguage } from '@/constants/i18n';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -18,9 +19,21 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      try {
+        // Load saved language preference
+        await loadSavedLanguage();
+        
+        // Hide splash screen after fonts loaded and language preference applied
+        if (loaded) {
+          await SplashScreen.hideAsync();
+        }
+      } catch (e) {
+        console.warn(e);
+      }
     }
+
+    prepare();
   }, [loaded]);
 
   if (!loaded) {
@@ -29,11 +42,12 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }
