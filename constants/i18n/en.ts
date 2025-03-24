@@ -64,5 +64,63 @@ export default {
       startButton: 'Start New Process'
     },
     withProcess: 'Active Process'
+  },
+  userInformation: {
+    title: 'Personal Information',
+    subtitle: 'To start your license renewal, you need to have the following data and documents at hand',
+    documentTypes: {
+      identity: 'Identity document',
+      currentLicense: 'Current License',
+      addressProof: 'Proof of address'
+    },
+    optional: '(optional)',
+    startProcess: 'Start my process',
+    requirements: {
+      title: 'Requirements',
+      description: 'Make sure you have all the necessary documents before continuing'
+    }
+  },
+  documentUpload: {
+    title: 'Your Documents',
+    subtitle: 'Upload the required documents to continue with your license renewal process',
+    uploadButton: 'Upload document',
+    uploadInstructions: 'Tap to upload or take a photo',
+    documentTypes: {
+      identity: 'Identity document',
+      currentLicense: 'Current License',
+      addressProof: 'Proof of address',
+      passport: 'Passport'
+    },
+    selectOption: 'Select Option',
+    captureMethod: 'How would you like to add your document?',
+    takePhoto: 'Take Photo',
+    chooseFromLibrary: 'Choose from Library',
+    error: 'Error',
+    captureError: 'There was an error capturing the document. Please try again.',
+    cameraError: 'There was an error opening the camera. Please try again.',
+    permissionRequired: 'Permission Required',
+    cameraPermissionMessage: 'We need access to your camera to take photos of your documents.',
+    settings: 'Settings',
+    continue: 'Continue',
+    tapToChange: 'Tap to change',
+    documentTypeSelector: 'Document Type',
+    dpi: 'DPI',
+    passport: 'Passport',
+    bothDocuments: 'Both documents',
+    recommended: '(recommended)',
+    frontSide: 'Front side',
+    backSide: 'Back side',
+    dpiFullName: 'Personal Identification Document',
+    currentLicenseQuestion: 'Do you have your previous license?',
+    delete: 'Delete document',
+    submit: 'Submit documents'
+  },
+  reviewDocuments: {
+    title: 'Review Documents',
+    subtitle: 'Review your documents before submitting',
+    uploadedDocuments: 'Uploaded documents',
+    submit: 'Submit documents',
+    submitSuccess: 'Documents submitted successfully',
+    documentError: 'There was an issue with the document. Please try again.'
   }
 }; 

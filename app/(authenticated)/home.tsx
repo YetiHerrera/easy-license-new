@@ -12,7 +12,7 @@ export default function Home() {
   const theme = Colors[colorScheme];
 
   const handleStartNewProcess = () => {
-    setHasActiveProcess(true);
+    router.replace('/(authenticated)/user-information');
   };
 
   if (hasActiveProcess) {

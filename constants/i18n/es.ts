@@ -64,5 +64,63 @@ export default {
       startButton: 'Iniciar Nuevo Proceso'
     },
     withProcess: 'Proceso Activo'
+  },
+  userInformation: {
+    title: 'Información Personal',
+    subtitle: 'Para iniciar la renovación de tu licencia es necesario que tengas a la mano los siguientes datos y documentos',
+    documentTypes: {
+      identity: 'Documento de identidad',
+      currentLicense: 'Licencia Actual',
+      addressProof: 'Comprobante de domicilio'
+    },
+    optional: '(opcional)',
+    startProcess: 'Iniciar mi trámite',
+    requirements: {
+      title: 'Requisitos',
+      description: 'Asegúrate de tener todos los documentos necesarios antes de continuar'
+    }
+  },
+  documentUpload: {
+    title: 'Tud Documentos',
+    subtitle: 'Sube los documentos requeridos para continuar con el proceso de renovación de tu licencia',
+    uploadButton: 'Subir documento',
+    uploadInstructions: 'Toca para subir o tomar una foto',
+    documentTypes: {
+      identity: 'Documento de identidad',
+      currentLicense: 'Licencia Actual',
+      addressProof: 'Comprobante de domicilio',
+      passport: 'Pasaporte'
+    },
+    selectOption: 'Seleccionar opción',
+    captureMethod: '¿Cómo deseas agregar tu documento?',
+    takePhoto: 'Tomar foto',
+    chooseFromLibrary: 'Elegir de la galería',
+    error: 'Error',
+    captureError: 'Hubo un error al capturar el documento. Inténtalo de nuevo.',
+    cameraError: 'Hubo un error al abrir la cámara. Inténtalo de nuevo.',
+    permissionRequired: 'Permiso requerido',
+    cameraPermissionMessage: 'Necesitamos acceso a tu cámara para tomar fotos de tus documentos.',
+    settings: 'Configuración',
+    continue: 'Continuar',
+    tapToChange: 'Toca para cambiar',
+    documentTypeSelector: 'Tipo de documento',
+    dpi: 'DPI',
+    passport: 'Pasaporte',
+    bothDocuments: 'Ambos documentos',
+    recommended: '(recomendado)',
+    frontSide: 'Parte frontal',
+    backSide: 'Parte posterior',
+    dpiFullName: 'Documento Personal de Identidad',
+    currentLicenseQuestion: '¿Tienes tu licencia anterior?',
+    delete: 'Eliminar documento',
+    submit: 'Enviar documentos'
+  },
+  reviewDocuments: {
+    title: 'Revisar Documentos',
+    subtitle: 'Revisa tus documentos antes de enviarlos',
+    uploadedDocuments: 'Documentos subidos',
+    submit: 'Enviar documentos',
+    submitSuccess: 'Documentos enviados con éxito',
+    documentError: 'Hubo un problema con el documento. Por favor, inténtalo de nuevo.'
   }
 }; 
