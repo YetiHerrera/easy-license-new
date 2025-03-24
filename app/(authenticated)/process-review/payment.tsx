@@ -7,12 +7,42 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import FormInput from '@/components/auth/FormInput';
+import { useData } from '@/contexts/DataContext';
+
+// Calculate total charges in Quetzales
+const calculateTotal = (processTypes: string[]) => {
+  const CHARGES = {
+    renewal: 100,
+    replacement: 100,
+    visualTest: 50,
+    expiredLicense: 50,
+    delivery: 120,
+  };
+  
+  let total = 0;
+  
+  // Add process type charges
+  if (processTypes.includes('renewal')) {
+    total += CHARGES.renewal;
+  }
+  if (processTypes.includes('replacement')) {
+    total += CHARGES.replacement;
+  }
+  
+  // Add other charges
+  total += CHARGES.visualTest;
+  total += CHARGES.expiredLicense;
+  total += CHARGES.delivery;
+  
+  return total;
+};
 
 type CardType = 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown';
 
 export default function Payment() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { processData, addCompletedProcess } = useData();
   
   // Form state
   const [cardNumber, setCardNumber] = useState('');
@@ -131,15 +161,21 @@ export default function Payment() {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
       setIsProcessing(true);
       
-      // Simulate payment processing
-      setTimeout(() => {
-        setIsProcessing(false);
+      try {
+        // Calculate total amount
+        const totalAmount = calculateTotal(processData.processTypes);
         
-        // Show success alert and navigate to success screen or home
+        // Simulate payment processing
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Add the completed process to the data context
+        await addCompletedProcess(totalAmount);
+        
+        // Show success alert and navigate to home
         Alert.alert(
           t('payment.paymentSuccessTitle'),
           t('payment.paymentSuccessMessage'),
@@ -150,7 +186,16 @@ export default function Payment() {
             },
           ]
         );
-      }, 2000);
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        Alert.alert(
+          t('payment.paymentFailedTitle'),
+          t('payment.paymentFailedMessage'),
+          [{ text: t('payment.ok') }]
+        );
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 

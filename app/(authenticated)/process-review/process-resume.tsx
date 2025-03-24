@@ -4,55 +4,47 @@ import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { useData } from '@/contexts/DataContext';
 
-// Mock data - In a real app, this would come from your state or API
-const mockData = {
-  processTypes: ['replacement'], // or ['renewal'] or ['renewal', 'replacement']
-  address: 'A A',
-  postalCode: '0518',
-  phoneNumber: '+50256003171',
-  userName: 'John Doe',
-  licenseType: 'C',
-  // Charges in Quetzales
-  charges: {
-    renewal: 100,
-    replacement: 100,
-    visualTest: 50,
-    expiredLicense: 50,
-    delivery: 120,
-  },
-  // Exchange rate
-  exchangeRate: 7.85, // 7.85 Quetzales per dollar
+// Fixed charges in Quetzales
+const CHARGES = {
+  renewal: 100,
+  replacement: 100,
+  visualTest: 50,
+  expiredLicense: 50,
+  delivery: 120,
 };
+
+// Exchange rate
+const EXCHANGE_RATE = 7.85; // 7.85 Quetzales per dollar
 
 export default function ProcessResume() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { userProfile, processData } = useData();
   
   // Calculate total charges
   const calculateTotal = () => {
     let total = 0;
     
     // Add process type charges
-    if (mockData.processTypes.includes('renewal')) {
-      total += mockData.charges.renewal;
+    if (processData.processTypes.includes('renewal')) {
+      total += CHARGES.renewal;
     }
-    if (mockData.processTypes.includes('replacement')) {
-      total += mockData.charges.replacement;
+    if (processData.processTypes.includes('replacement')) {
+      total += CHARGES.replacement;
     }
     
     // Add other charges
-    total += mockData.charges.visualTest;
-    total += mockData.charges.expiredLicense;
-    total += mockData.charges.delivery;
+    total += CHARGES.visualTest;
+    total += CHARGES.expiredLicense;
+    total += CHARGES.delivery;
     
     return total;
   };
   
   const totalAmount = calculateTotal();
-  const totalUSD = (totalAmount / mockData.exchangeRate).toFixed(2);
+  const totalUSD = (totalAmount / EXCHANGE_RATE).toFixed(2);
 
   const handleConfirm = () => {
     // Navigate to payment screen
@@ -60,14 +52,30 @@ export default function ProcessResume() {
   };
 
   const getProcessTypeText = () => {
-    if (mockData.processTypes.includes('renewal') && mockData.processTypes.includes('replacement')) {
+    if (processData.processTypes.includes('renewal') && processData.processTypes.includes('replacement')) {
       return t('processResume.renewalAndReplacement');
-    } else if (mockData.processTypes.includes('renewal')) {
+    } else if (processData.processTypes.includes('renewal')) {
       return t('processType.renewal');
-    } else if (mockData.processTypes.includes('replacement')) {
+    } else if (processData.processTypes.includes('replacement')) {
       return t('processType.replacement');
     }
     return '';
+  };
+
+  // Format the address for display
+  const getFormattedAddress = () => {
+    const { streetAddress, apartment, city, state, zipCode } = processData.deliveryAddress;
+    let address = streetAddress;
+    if (apartment) {
+      address += `, ${apartment}`;
+    }
+    return address;
+  };
+
+  // Get the user's full name
+  const getFullName = () => {
+    const { names, lastNames } = processData.licenseInformation;
+    return `${names} ${lastNames}`;
   };
 
   return (
@@ -116,7 +124,7 @@ export default function ProcessResume() {
                     {t('processResume.address')}
                   </Text>
                   <Text style={[styles.detailValue, { color: theme.text }]}>
-                    {mockData.address}
+                    {getFormattedAddress()}
                   </Text>
                 </View>
                 
@@ -125,7 +133,7 @@ export default function ProcessResume() {
                     {t('processResume.postalCode')}
                   </Text>
                   <Text style={[styles.detailValue, { color: theme.text }]}>
-                    {mockData.postalCode}
+                    {processData.deliveryAddress.zipCode}
                   </Text>
                 </View>
                 
@@ -135,7 +143,7 @@ export default function ProcessResume() {
                     {t('processResume.phoneNumber')}
                   </Text>
                   <Text style={[styles.detailValue, { color: theme.text }]}>
-                    {mockData.phoneNumber}
+                    {userProfile.countryCode}{userProfile.phoneNumber}
                   </Text>
                 </View>
                 
@@ -144,7 +152,7 @@ export default function ProcessResume() {
                     {t('processResume.name')}
                   </Text>
                   <Text style={[styles.detailValue, { color: theme.text }]}>
-                    {mockData.userName}
+                    {getFullName()}
                   </Text>
                 </View>
                 
@@ -154,7 +162,9 @@ export default function ProcessResume() {
                     {t('processResume.licenseType')}
                   </Text>
                   <Text style={[styles.detailValue, { color: theme.text }]}>
-                    {mockData.licenseType}
+                    {processData.licenseInformation.licenseType !== 'unselected' 
+                      ? processData.licenseInformation.licenseType 
+                      : '-'}
                   </Text>
                 </View>
               </View>
@@ -170,24 +180,24 @@ export default function ProcessResume() {
               </Text>
               
               {/* Process Type Charges */}
-              {mockData.processTypes.includes('renewal') && (
+              {processData.processTypes.includes('renewal') && (
                 <View style={styles.paymentRow}>
                   <Text style={[styles.paymentItem, { color: theme.text }]}>
                     {t('processType.renewal')}
                   </Text>
                   <Text style={[styles.paymentAmount, { color: theme.text }]}>
-                    Q{mockData.charges.renewal.toFixed(2)}
+                    Q{CHARGES.renewal.toFixed(2)}
                   </Text>
                 </View>
               )}
               
-              {mockData.processTypes.includes('replacement') && (
+              {processData.processTypes.includes('replacement') && (
                 <View style={styles.paymentRow}>
                   <Text style={[styles.paymentItem, { color: theme.text }]}>
                     {t('processType.replacement')}
                   </Text>
                   <Text style={[styles.paymentAmount, { color: theme.text }]}>
-                    Q{mockData.charges.replacement.toFixed(2)}
+                    Q{CHARGES.replacement.toFixed(2)}
                   </Text>
                 </View>
               )}
@@ -198,7 +208,7 @@ export default function ProcessResume() {
                   {t('processResume.visualTest')}
                 </Text>
                 <Text style={[styles.paymentAmount, { color: theme.text }]}>
-                  Q{mockData.charges.visualTest.toFixed(2)}
+                  Q{CHARGES.visualTest.toFixed(2)}
                 </Text>
               </View>
               
@@ -207,7 +217,7 @@ export default function ProcessResume() {
                   {t('processResume.expiredLicense')}
                 </Text>
                 <Text style={[styles.paymentAmount, { color: theme.text }]}>
-                  Q{mockData.charges.expiredLicense.toFixed(2)}
+                  Q{CHARGES.expiredLicense.toFixed(2)}
                 </Text>
               </View>
               
@@ -216,7 +226,7 @@ export default function ProcessResume() {
                   {t('processResume.delivery')}
                 </Text>
                 <Text style={[styles.paymentAmount, { color: theme.text }]}>
-                  Q{mockData.charges.delivery.toFixed(2)}
+                  Q{CHARGES.delivery.toFixed(2)}
                 </Text>
               </View>
               

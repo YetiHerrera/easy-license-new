@@ -65,7 +65,23 @@ export default {
       description: 'Actualmente no tienes ningún proceso de licencia activo. Inicia uno nuevo para comenzar tu proceso de renovación.',
       startButton: 'Iniciar Nuevo Proceso'
     },
-    withProcess: 'Proceso Activo'
+    withProcess: 'Proceso Activo',
+    activeProcesses: 'Tus Procesos Activos',
+    newProcess: 'Nuevo Proceso',
+    viewDetails: 'Ver Detalles',
+    welcome: 'Usuario',
+    greeting: '¡Hola, {{name}}!',
+    welcomeBack: '¡Bienvenido de nuevo!'
+  },
+  process: {
+    licenseType: 'Tipo de Licencia',
+    paymentDate: 'Fecha de Pago',
+    deliveryDate: 'Entrega Estimada',
+    statusPending: 'Pendiente',
+    statusProcessing: 'En Proceso',
+    statusCompleted: 'Completado',
+    trackProcess: 'Seguir Proceso',
+    viewDetails: 'Ver Detalles'
   },
   userInformation: {
     title: 'Información Personal',
@@ -251,13 +267,15 @@ export default {
     cvvRequired: 'El CVV es requerido',
     invalidCvv: 'Por favor ingresa un CVV válido (3-4 dígitos)',
     cardholderName: 'Nombre del titular',
-    cardholderNamePlaceholder: 'Nombre completo en la tarjeta',
+    cardholderNamePlaceholder: 'Nombre en la tarjeta',
     cardholderNameRequired: 'El nombre del titular es requerido',
-    securityNote: 'Tu información de pago es segura y está encriptada',
-    payNow: 'Pagar ahora',
+    securityNote: 'Tu información de pago está segura y encriptada',
+    payNow: 'Pagar Ahora',
     processing: 'Procesando...',
     paymentSuccessTitle: 'Pago Exitoso',
-    paymentSuccessMessage: 'Tu proceso de renovación de licencia ha sido completado exitosamente.',
+    paymentSuccessMessage: 'Tu proceso de renovación de licencia ha sido completado con éxito.',
+    paymentFailedTitle: 'Pago Fallido',
+    paymentFailedMessage: 'Hubo un error al procesar tu pago. Por favor intenta de nuevo.',
     ok: 'OK'
   }
 }; 

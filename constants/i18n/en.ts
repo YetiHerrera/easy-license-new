@@ -65,7 +65,23 @@ export default {
       description: 'You currently don\'t have any active license process. Start a new one to begin your license renewal journey.',
       startButton: 'Start New Process'
     },
-    withProcess: 'Active Process'
+    withProcess: 'Active Process',
+    activeProcesses: 'Your Active Processes',
+    newProcess: 'New Process',
+    viewDetails: 'View Details',
+    welcome: 'User',
+    greeting: 'Hello, {{name}}!',
+    welcomeBack: 'Welcome Back!'
+  },
+  process: {
+    licenseType: 'License Type',
+    paymentDate: 'Payment Date',
+    deliveryDate: 'Estimated Delivery',
+    statusPending: 'Pending',
+    statusProcessing: 'Processing',
+    statusCompleted: 'Completed',
+    trackProcess: 'Track Process',
+    viewDetails: 'View Details'
   },
   userInformation: {
     title: 'Personal Information',
@@ -249,13 +265,15 @@ export default {
     cvvRequired: 'CVV is required',
     invalidCvv: 'Please enter a valid CVV (3-4 digits)',
     cardholderName: 'Cardholder Name',
-    cardholderNamePlaceholder: 'Full name on card',
+    cardholderNamePlaceholder: 'Name on card',
     cardholderNameRequired: 'Cardholder name is required',
     securityNote: 'Your payment information is secure and encrypted',
     payNow: 'Pay Now',
     processing: 'Processing...',
     paymentSuccessTitle: 'Payment Successful',
     paymentSuccessMessage: 'Your license renewal process has been completed successfully.',
+    paymentFailedTitle: 'Payment Failed',
+    paymentFailedMessage: 'There was an error processing your payment. Please try again.',
     ok: 'OK'
   }
 }; 

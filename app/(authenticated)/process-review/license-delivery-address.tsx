@@ -4,9 +4,10 @@ import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import FormInput from '@/components/auth/FormInput';
+import { useData } from '@/contexts/DataContext';
 
 // US States list
 const US_STATES = [
@@ -25,15 +26,27 @@ const US_STATES = [
 export default function LicenseDeliveryAddress() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { processData, updateDeliveryAddress } = useData();
   
-  const [streetAddress, setStreetAddress] = useState('');
-  const [apartment, setApartment] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [zipCode, setZipCode] = useState('');
+  const [streetAddress, setStreetAddress] = useState(processData.deliveryAddress.streetAddress || '');
+  const [apartment, setApartment] = useState(processData.deliveryAddress.apartment || '');
+  const [city, setCity] = useState(processData.deliveryAddress.city || '');
+  const [state, setState] = useState(processData.deliveryAddress.state || '');
+  const [zipCode, setZipCode] = useState(processData.deliveryAddress.zipCode || '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showStatePicker, setShowStatePicker] = useState(false);
   const [showCityPicker, setShowCityPicker] = useState(false);
+
+  // Load saved delivery address from context
+  useEffect(() => {
+    if (processData.deliveryAddress) {
+      setStreetAddress(processData.deliveryAddress.streetAddress || '');
+      setApartment(processData.deliveryAddress.apartment || '');
+      setCity(processData.deliveryAddress.city || '');
+      setState(processData.deliveryAddress.state || '');
+      setZipCode(processData.deliveryAddress.zipCode || '');
+    }
+  }, [processData.deliveryAddress]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -64,16 +77,17 @@ export default function LicenseDeliveryAddress() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      // Here you would submit the form data
-      console.log({
+      // Save delivery address to context
+      await updateDeliveryAddress({
         streetAddress,
         apartment,
         city,
         state,
         zipCode,
       });
+      
       // Navigate to next step
       router.push('/(authenticated)/process-review/process-type' as any);
     }

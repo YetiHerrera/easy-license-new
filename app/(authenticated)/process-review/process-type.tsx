@@ -4,16 +4,25 @@ import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useData } from '@/contexts/DataContext';
 
 type ProcessType = 'renewal' | 'replacement';
 
 export default function ProcessType() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { processData, updateProcessTypes } = useData();
   
-  const [selectedProcesses, setSelectedProcesses] = useState<ProcessType[]>([]);
+  const [selectedProcesses, setSelectedProcesses] = useState<ProcessType[]>(processData.processTypes || []);
+
+  // Load saved process types from context
+  useEffect(() => {
+    if (processData.processTypes && processData.processTypes.length > 0) {
+      setSelectedProcesses(processData.processTypes);
+    }
+  }, [processData.processTypes]);
 
   const handleProcessSelection = (process: ProcessType) => {
     setSelectedProcesses(prev => {
@@ -25,8 +34,10 @@ export default function ProcessType() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedProcesses.length > 0) {
+      // Save the selected process types to the context
+      await updateProcessTypes(selectedProcesses);
       router.push('/(authenticated)/process-review/process-resume' as any);
     }
   };

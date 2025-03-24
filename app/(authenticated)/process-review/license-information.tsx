@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import FormInput from '@/components/auth/FormInput';
+import { useData } from '@/contexts/DataContext';
 
 type LicenseType = 'A' | 'B' | 'C' | 'M' | 'E' | 'unselected';
 
@@ -16,17 +17,30 @@ const RENEWAL_YEARS: string[] = ['unselected', '1', '2', '3', '4', '5'];
 export default function LicenseInformation() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { processData, updateLicenseInformation } = useData();
   
-  const [dpi, setDpi] = useState('');
-  const [names, setNames] = useState('');
-  const [lastNames, setLastNames] = useState('');
-  const [licenseType, setLicenseType] = useState<LicenseType>('unselected');
-  const [renewalYears, setRenewalYears] = useState('unselected');
-  const [bornDate, setBornDate] = useState(new Date());
+  const [dpi, setDpi] = useState(processData.licenseInformation.dpi || '');
+  const [names, setNames] = useState(processData.licenseInformation.names || '');
+  const [lastNames, setLastNames] = useState(processData.licenseInformation.lastNames || '');
+  const [licenseType, setLicenseType] = useState<LicenseType>(processData.licenseInformation.licenseType || 'unselected');
+  const [renewalYears, setRenewalYears] = useState(processData.licenseInformation.renewalYears || 'unselected');
+  const [bornDate, setBornDate] = useState(processData.licenseInformation.bornDate || new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showLicenseTypePicker, setShowLicenseTypePicker] = useState(false);
   const [showRenewalYearsPicker, setShowRenewalYearsPicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Load saved license information from context
+  useEffect(() => {
+    if (processData.licenseInformation) {
+      setDpi(processData.licenseInformation.dpi || '');
+      setNames(processData.licenseInformation.names || '');
+      setLastNames(processData.licenseInformation.lastNames || '');
+      setLicenseType(processData.licenseInformation.licenseType || 'unselected');
+      setRenewalYears(processData.licenseInformation.renewalYears || 'unselected');
+      setBornDate(processData.licenseInformation.bornDate || new Date());
+    }
+  }, [processData.licenseInformation]);
 
   const handleDateChange = (date: Date) => {
     setBornDate(date);
@@ -75,10 +89,10 @@ export default function LicenseInformation() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      // Here you would submit the form data
-      console.log({
+      // Save license information to context
+      await updateLicenseInformation({
         dpi,
         names,
         lastNames,
@@ -86,6 +100,7 @@ export default function LicenseInformation() {
         renewalYears,
         bornDate,
       });
+      
       // Navigate to next step
       router.push('/(authenticated)/process-review/license-delivery-address' as any);
     }

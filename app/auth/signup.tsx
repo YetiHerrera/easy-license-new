@@ -8,10 +8,12 @@ import FormInput from '../../components/auth/FormInput';
 import PhoneInput from '../../components/auth/PhoneInput';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
+import { useData } from '@/contexts/DataContext';
 
 export default function SignupScreen() {
   const router = useRouter();
   const { sendVerificationCode } = useAuth();
+  const { updateUserProfile } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -47,6 +49,15 @@ export default function SignupScreen() {
     if (validate()) {
       try {
         setIsLoading(true);
+        
+        // Save user profile data to DataContext
+        await updateUserProfile({
+          email,
+          phoneNumber,
+          countryCode
+        });
+        
+        // Send verification code
         await sendVerificationCode(email, `${countryCode}${phoneNumber}`);
         router.push('/auth/verify-code');
       } catch (error) {

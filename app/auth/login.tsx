@@ -7,10 +7,12 @@ import { t } from '../../constants/i18n';
 import FormInput from '../../components/auth/FormInput';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
+import { useData } from '@/contexts/DataContext';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { signIn } = useAuth();
+  const { updateUserProfile } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -38,6 +40,11 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (validate()) {
       try {
+        // Store the email in the DataContext
+        await updateUserProfile({
+          email
+        });
+        
         // First perform the sign in action
         await signIn('dummy-token');
         
