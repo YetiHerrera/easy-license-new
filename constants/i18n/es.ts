@@ -81,7 +81,15 @@ export default {
     statusProcessing: 'En Proceso',
     statusCompleted: 'Completado',
     trackProcess: 'Seguir Proceso',
-    viewDetails: 'Ver Detalles'
+    viewDetails: 'Ver Detalles',
+    steps: {
+      title: 'Pasos del Proceso',
+      visualTest: 'Prueba Visual',
+      transitVerification: 'Verificación del Departamento de Tránsito',
+      visualTestDescription: 'Visite un centro de pruebas para completar su examen visual',
+      transitVerificationDescription: 'Este proceso es automatizado por el Departamento de Tránsito',
+      helpText: 'Toque cualquier paso para ver detalles y estado'
+    }
   },
   userInformation: {
     title: 'Información Personal',

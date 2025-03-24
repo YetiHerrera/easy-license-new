@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme, FlatList, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme, FlatList, StatusBar, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,12 +12,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Home() {
   const { signOut } = useAuth();
-  const { hasActiveProcesses, completedProcesses, userProfile } = useData();
+  const { hasActiveProcesses, completedProcesses, userProfile, updateProcessVerificationStep } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
 
   const handleStartNewProcess = () => {
-    router.push('/(authenticated)/process-review/license-information');
+    router.push('/(authenticated)/user-information');
   };
 
   const handleLogout = async () => {
@@ -82,6 +82,24 @@ export default function Home() {
     }
     
     return t('home.welcome');
+  };
+
+  const handleToggleStep = async (processId: string, step: 'visualTest' | 'transitVerification', currentStatus: boolean) => {
+    await updateProcessVerificationStep(processId, step, !currentStatus);
+  };
+
+  const handleNavigateToStep = (processId: string, step: 'visualTest' | 'transitVerification') => {
+    if (step === 'visualTest') {
+      router.push({
+        pathname: '/process-steps/visual-test',
+        params: { id: processId }
+      });
+    } else {
+      router.push({
+        pathname: '/process-steps/transit-verification',
+        params: { id: processId }
+      });
+    }
   };
 
   const WelcomeHeader = () => (
@@ -240,6 +258,68 @@ export default function Home() {
     );
   };
 
+  const renderProcessSteps = () => {
+    // Only render steps if there's at least one process
+    if (!completedProcesses || completedProcesses.length === 0) {
+      return null;
+    }
+    
+    // Use the first process for demonstration
+    const process = completedProcesses[0];
+    
+    return (
+      <View style={[styles.processStepsSection, { backgroundColor: theme.background }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          {t('process.steps.title')}
+        </Text>
+        
+        <View style={[styles.stepsCard, { backgroundColor: theme.formInputBackground }]}>
+          {/* Visual Test Step */}
+          <TouchableOpacity 
+            style={styles.stepButton}
+            onPress={() => handleNavigateToStep(process.id, 'visualTest')}
+          >
+            <View style={styles.stepRow}>
+              <View style={[styles.stepIndicator, process.visualTestCompleted ? styles.stepCompleted : styles.stepPending]}>
+                {process.visualTestCompleted ? 
+                  <AntDesign name="check" size={14} color="#FFFFFF" /> : 
+                  <View style={styles.stepDot} />
+                }
+              </View>
+              <View style={styles.stepTextContainer}>
+                <Text style={[styles.stepText, { color: theme.text }]}>{t('process.steps.visualTest')}</Text>
+                <Text style={[styles.stepDescription, { color: theme.text + '99' }]}>{t('process.steps.visualTestDescription')}</Text>
+              </View>
+            </View>
+            <AntDesign name="right" size={16} color={theme.text + '80'} />
+          </TouchableOpacity>
+          
+          <View style={styles.stepDivider} />
+          
+          {/* Transit Department Verification */}
+          <TouchableOpacity 
+            style={styles.stepButton}
+            onPress={() => handleNavigateToStep(process.id, 'transitVerification')}
+          >
+            <View style={styles.stepRow}>
+              <View style={[styles.stepIndicator, process.transitVerificationCompleted ? styles.stepCompleted : styles.stepPending]}>
+                {process.transitVerificationCompleted ? 
+                  <AntDesign name="check" size={14} color="#FFFFFF" /> : 
+                  <View style={styles.stepDot} />
+                }
+              </View>
+              <View style={styles.stepTextContainer}>
+                <Text style={[styles.stepText, { color: theme.text }]}>{t('process.steps.transitVerification')}</Text>
+                <Text style={[styles.stepDescription, { color: theme.text + '99' }]}>{t('process.steps.transitVerificationDescription')}</Text>
+              </View>
+            </View>
+            <AntDesign name="right" size={16} color={theme.text + '80'} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   const renderProcessList = () => (
     <SafeAreaView style={[styles.safeContainer, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
@@ -252,6 +332,7 @@ export default function Home() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        ListFooterComponent={renderProcessSteps}
       />
     </SafeAreaView>
   );
@@ -406,5 +487,86 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  processStepsSection: {
+    padding: 20,
+    marginTop: 10,
+    paddingBottom: 40,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  stepsCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  stepsList: {
+    gap: 12,
+  },
+  stepButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  stepDivider: {
+    height: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    marginHorizontal: 16,
+  },
+  stepRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  stepIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  stepTextContainer: {
+    flex: 1,
+  },
+  stepDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+  },
+  stepCompleted: {
+    backgroundColor: '#34C759',
+  },
+  stepPending: {
+    backgroundColor: 'rgba(100, 100, 100, 0.5)',
+  },
+  stepText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  stepDescription: {
+    fontSize: 14,
+  },
+  stepsHelp: {
+    textAlign: 'center',
+    fontSize: 14,
   },
 }); 

@@ -81,7 +81,15 @@ export default {
     statusProcessing: 'Processing',
     statusCompleted: 'Completed',
     trackProcess: 'Track Process',
-    viewDetails: 'View Details'
+    viewDetails: 'View Details',
+    steps: {
+      title: 'Process Steps',
+      visualTest: 'Visual Test',
+      transitVerification: 'Transit Department Verification',
+      visualTestDescription: 'Visit a testing center to complete your vision test',
+      transitVerificationDescription: 'This process is automated by the Transit Department',
+      helpText: 'Tap on any step to view details and status'
+    }
   },
   userInformation: {
     title: 'Personal Information',

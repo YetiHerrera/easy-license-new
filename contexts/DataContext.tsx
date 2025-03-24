@@ -45,6 +45,8 @@ export interface CompletedProcess extends ProcessData {
   paymentDate: Date;
   amount: number;
   estimatedDeliveryDate: Date;
+  visualTestCompleted?: boolean;
+  transitVerificationCompleted?: boolean;
 }
 
 // Combined data context type
@@ -61,6 +63,7 @@ interface DataContextType {
   // Completed processes methods
   addCompletedProcess: (amount: number) => Promise<string>;
   updateCompletedProcessStatus: (id: string, status: 'pending' | 'processing' | 'completed') => Promise<void>;
+  updateProcessVerificationStep: (id: string, step: 'visualTest' | 'transitVerification', completed: boolean) => Promise<void>;
   // Helper methods
   resetProcessData: () => Promise<void>;
   hasActiveProcesses: () => boolean;
@@ -228,6 +231,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         paymentDate,
         amount,
         estimatedDeliveryDate,
+        visualTestCompleted: false,
+        transitVerificationCompleted: false,
       };
       
       // Add to the list
@@ -264,6 +269,27 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Update a verification step of a process
+  const updateProcessVerificationStep = async (id: string, step: 'visualTest' | 'transitVerification', completed: boolean) => {
+    try {
+      const updatedProcesses = completedProcesses.map(process => {
+        if (process.id === id) {
+          if (step === 'visualTest') {
+            return { ...process, visualTestCompleted: completed };
+          } else {
+            return { ...process, transitVerificationCompleted: completed };
+          }
+        }
+        return process;
+      });
+      
+      setCompletedProcesses(updatedProcesses);
+      await AsyncStorage.setItem(COMPLETED_PROCESSES_KEY, JSON.stringify(updatedProcesses));
+    } catch (error) {
+      console.error('Error updating verification step:', error);
+    }
+  };
+
   // Reset process data
   const resetProcessData = async () => {
     try {
@@ -291,6 +317,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         updateProcessTypes,
         addCompletedProcess,
         updateCompletedProcessStatus,
+        updateProcessVerificationStep,
         resetProcessData,
         hasActiveProcesses,
       }}
