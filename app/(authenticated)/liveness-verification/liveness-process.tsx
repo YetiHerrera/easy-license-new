@@ -38,6 +38,8 @@ export default function LivenessProcess() {
       // Stop recording would go here in an actual implementation
       console.log('Recording stopped');
       setVerificationState('completed');
+      // Automatically submit verification after stopping recording
+      submitVerification();
     }
   };
 
@@ -48,7 +50,7 @@ export default function LivenessProcess() {
     // In a real implementation, you would wait for a response from the server
     // before navigating away or showing success
     setTimeout(() => {
-      router.push('/(authenticated)/home' as any);
+      router.push('/(authenticated)/process-review/license-information' as any);
     }, 3000);
   };
 
@@ -59,9 +61,6 @@ export default function LivenessProcess() {
         break;
       case 'recording':
         stopRecording();
-        break;
-      case 'completed':
-        submitVerification();
         break;
       default:
         break;
@@ -75,8 +74,6 @@ export default function LivenessProcess() {
         return t('livenessVerification.startRecording');
       case 'recording':
         return t('livenessVerification.finishRecording');
-      case 'completed':
-        return t('livenessVerification.verifyRecording');
       case 'verified':
         return t('livenessVerification.verificationComplete');
       default:
@@ -89,8 +86,6 @@ export default function LivenessProcess() {
     switch (verificationState) {
       case 'recording':
         return styles.recordingButton;
-      case 'completed':
-        return styles.completeButton;
       case 'verified':
         return styles.verifiedButton;
       default:
@@ -201,9 +196,6 @@ export default function LivenessProcess() {
           )}
           {verificationState === 'recording' && (
             <Ionicons name="stop-circle" size={24} color="white" style={styles.buttonIcon} />
-          )}
-          {verificationState === 'completed' && (
-            <Ionicons name="checkmark-circle" size={24} color="white" style={styles.buttonIcon} />
           )}
           {verificationState === 'verified' && (
             <Ionicons name="checkmark-done-circle" size={24} color="white" style={styles.buttonIcon} />
@@ -341,9 +333,6 @@ const styles = StyleSheet.create({
   },
   recordingButton: {
     backgroundColor: '#E53935',
-  },
-  completeButton: {
-    backgroundColor: '#43A047',
   },
   verifiedButton: {
     backgroundColor: '#43A047',

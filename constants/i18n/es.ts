@@ -55,7 +55,9 @@ export default {
     save: 'Guardar',
     delete: 'Eliminar',
     edit: 'Editar',
-    back: 'Atrás'
+    back: 'Atrás',
+    continue: 'Continuar',
+    confirm: 'Confirmar'
   },
   home: {
     emptyState: {
@@ -162,5 +164,29 @@ export default {
     finishRecording: 'Finalizar grabación',
     verifyRecording: 'Enviar verificación',
     verificationSuccessMessage: 'Tu identidad prueba de verificación fue enviada con éxito y sera revisada por nuestros agentes.'
+  },
+  licenseInformation: {
+    title: 'Información de Licencia',
+    subtitle: 'Por favor, complete toda la información requerida para la renovación de su licencia',
+    dpi: 'DPI o Pasaporte',
+    dpiOrPassportPlaceholder: 'Ingrese su DPI (13 dígitos) o número de pasaporte',
+    dpiRequired: 'El DPI o Pasaporte es requerido',
+    invalidDpi: 'Por favor ingrese un DPI válido (13 dígitos) o número de pasaporte (8-12 caracteres)',
+    names: 'Nombres',
+    namesPlaceholder: 'Ingrese su(s) nombre(s)',
+    lastNames: 'Apellidos',
+    lastNamesPlaceholder: 'Ingrese su(s) apellido(s)',
+    licenseType: 'Tipo de Licencia',
+    renewalYears: 'Años a Renovar',
+    years: 'años',
+    bornDate: 'Fecha de Nacimiento',
+    nameRequired: 'Los nombres son requeridos',
+    lastNameRequired: 'Los apellidos son requeridos',
+    invalidDate: 'Por favor ingrese una fecha de nacimiento válida',
+    ageRestriction: 'Debe tener al menos 18 años de edad',
+    selectDate: 'Seleccionar Fecha',
+    year: 'Año',
+    month: 'Mes',
+    day: 'Día'
   }
 }; 

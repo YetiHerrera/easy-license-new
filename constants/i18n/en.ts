@@ -55,7 +55,9 @@ export default {
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
-    back: 'Back'
+    back: 'Back',
+    continue: 'Continue',
+    confirm: 'Confirm'
   },
   home: {
     emptyState: {
@@ -162,5 +164,27 @@ export default {
     finishRecording: 'Finish recording',
     verifyRecording: 'Submit verification',
     verificationSuccessMessage: 'Your identity verification has been sent successfully and will be reviewed by our agents.'
+  },
+  licenseInformation: {
+    title: 'License Information',
+    subtitle: 'Please fill in all the required information for your license renewal',
+    dpi: 'DPI or Passport',
+    dpiOrPassportPlaceholder: 'Enter your DPI (13 digits) or Passport number',
+    dpiRequired: 'DPI or Passport is required',
+    invalidDpi: 'Please enter a valid DPI (13 digits) or Passport number (8-12 characters)',
+    names: 'Names',
+    namesPlaceholder: 'Enter your first name(s)',
+    lastNames: 'Last Names',
+    lastNamesPlaceholder: 'Enter your last name(s)',
+    licenseType: 'License Type',
+    renewalYears: 'Years to Renew',
+    years: 'years',
+    bornDate: 'Date of Birth',
+    invalidDate: 'Please enter a valid date of birth',
+    ageRestriction: 'You must be at least 18 years old',
+    selectDate: 'Select Date',
+    year: 'Year',
+    month: 'Month',
+    day: 'Day'
   }
 }; 
