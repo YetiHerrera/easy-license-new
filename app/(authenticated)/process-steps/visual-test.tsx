@@ -19,6 +19,12 @@ export default function VisualTest() {
     router.back();
   };
   
+  const handleStartTests = () => {
+    // Navigate to the first test (colorblind test)
+    // Will be implemented later
+    console.log('Start tests');
+  };
+  
   const handleCompleteTest = async () => {
     if (process) {
       await updateProcessVerificationStep(process.id, 'visualTest', true);
@@ -29,9 +35,9 @@ export default function VisualTest() {
   if (!process) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-        <Text style={[styles.errorText, { color: theme.text }]}>Process not found</Text>
+        <Text style={[styles.errorText, { color: theme.text }]}>{t('process.error.notFound')}</Text>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <Text style={[styles.backButtonText, { color: theme.primary }]}>Go Back</Text>
+          <Text style={[styles.backButtonText, { color: theme.primary }]}>{t('common.goBack')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -55,56 +61,73 @@ export default function VisualTest() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.description, { color: theme.text }]}>
-          Your visual test needs to be conducted at an authorized testing center. Please visit one of our centers to proceed.
+          {t('process.visualTest.description')}
         </Text>
         
         <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>Testing Centers</Text>
-          <View style={styles.centerInfo}>
-            <MaterialIcons name="location-on" size={20} color={theme.text} />
+          <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.beforeBegin')}</Text>
+          <View style={styles.infoItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Central Vision Testing Facility
+              {t('process.visualTest.holdPhone')}
             </Text>
           </View>
-          <View style={styles.centerInfo}>
-            <MaterialIcons name="access-time" size={20} color={theme.text} />
+          <View style={styles.infoItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Mon-Fri: 9:00 AM - 5:00 PM
+              {t('process.visualTest.wellLit')}
             </Text>
           </View>
-          <View style={styles.centerInfo}>
-            <MaterialIcons name="phone" size={20} color={theme.text} />
+          <View style={styles.infoItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              +502 2345-6789
+              {t('process.visualTest.wearGlasses')}
             </Text>
           </View>
         </View>
         
         <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>What to Bring</Text>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              Original DPI or Passport
-            </Text>
+          <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.threeTests')}</Text>
+          <View style={styles.testInfo}>
+            <View style={styles.testNumberCircle}>
+              <Text style={styles.testNumber}>1</Text>
+            </View>
+            <View style={styles.testDescription}>
+              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.colorblind.title')}</Text>
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {t('process.visualTest.colorblind.description')}
+              </Text>
+            </View>
           </View>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              Process Reference Number
-            </Text>
+          
+          <View style={styles.testInfo}>
+            <View style={styles.testNumberCircle}>
+              <Text style={styles.testNumber}>2</Text>
+            </View>
+            <View style={styles.testDescription}>
+              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.depthPerception.title')}</Text>
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {t('process.visualTest.depthPerception.description')}
+              </Text>
+            </View>
           </View>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              Any prescription glasses if you wear them
-            </Text>
+          
+          <View style={styles.testInfo}>
+            <View style={styles.testNumberCircle}>
+              <Text style={styles.testNumber}>3</Text>
+            </View>
+            <View style={styles.testDescription}>
+              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.myopia.title')}</Text>
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                {t('process.visualTest.myopia.description')}
+              </Text>
+            </View>
           </View>
         </View>
         
         <View style={styles.referenceContainer}>
           <Text style={[styles.referenceLabel, { color: theme.text }]}>
-            Process Reference Number:
+            {t('process.referenceNumber')}:
           </Text>
           <Text style={[styles.referenceValue, { color: theme.text }]}>
             {process.id}
@@ -112,18 +135,18 @@ export default function VisualTest() {
         </View>
         
         {!process.visualTestCompleted && (
-          <View style={[styles.statusBadge, { backgroundColor: theme.formInputBackground }]}>
-            <MaterialIcons name="schedule" size={20} color={theme.primary} />
-            <Text style={[styles.statusText, { color: theme.text }]}>
-              Pending Visual Test
-            </Text>
-          </View>
+          <TouchableOpacity 
+            style={[styles.startButton, { backgroundColor: theme.primary }]}
+            onPress={handleStartTests}
+          >
+            <Text style={styles.startButtonText}>{t('process.visualTest.startTests')}</Text>
+          </TouchableOpacity>
         )}
         
         {process.visualTestCompleted && (
           <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
             <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.completedText}>Test Completed</Text>
+            <Text style={styles.completedText}>{t('process.visualTest.testsCompleted')}</Text>
           </View>
         )}
       </ScrollView>
@@ -200,6 +223,34 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 12,
   },
+  testInfo: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    alignItems: 'flex-start',
+  },
+  testNumberCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#34C759',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    marginTop: 2,
+  },
+  testNumber: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  testDescription: {
+    flex: 1,
+  },
+  testTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
   referenceContainer: {
     marginTop: 24,
     marginBottom: 32,
@@ -225,6 +276,18 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  startButton: {
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  startButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
   completedBadge: {
     flexDirection: 'row',

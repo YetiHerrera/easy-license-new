@@ -57,7 +57,8 @@ export default {
     edit: 'Editar',
     back: 'Atrás',
     continue: 'Continuar',
-    confirm: 'Confirmar'
+    confirm: 'Confirmar',
+    goBack: 'Regresar'
   },
   home: {
     emptyState: {
@@ -89,6 +90,32 @@ export default {
       visualTestDescription: 'Visite un centro de pruebas para completar su examen visual',
       transitVerificationDescription: 'Este proceso es automatizado por el Departamento de Tránsito',
       helpText: 'Toque cualquier paso para ver detalles y estado'
+    },
+    error: {
+      notFound: 'Proceso no encontrado'
+    },
+    referenceNumber: 'Número de Referencia del Proceso',
+    visualTest: {
+      description: 'Completarás tres pruebas visuales directamente en tu teléfono. Asegúrate de estar en una habitación bien iluminada y coloca tu teléfono a la distancia del brazo extendido para obtener resultados precisos.',
+      beforeBegin: 'Antes de Comenzar',
+      holdPhone: 'Mantén tu teléfono a la distancia del brazo extendido',
+      wellLit: 'Asegúrate de estar en un entorno bien iluminado',
+      wearGlasses: 'Usa tus lentes recetados si normalmente los utilizas',
+      threeTests: 'Las Tres Pruebas',
+      colorblind: {
+        title: 'Prueba de Daltonismo',
+        description: 'Se te mostrarán varias imágenes con patrones. Identifica los números o formas ocultas dentro de los patrones para evaluar tu visión de colores.'
+      },
+      depthPerception: {
+        title: 'Prueba de Percepción de Profundidad',
+        description: 'Identifica qué objetos aparecen más cerca o más lejos en una serie de imágenes para evaluar tus habilidades de percepción de profundidad.'
+      },
+      myopia: {
+        title: 'Prueba de Miopía',
+        description: 'Lee letras de tamaño decreciente para determinar tu agudeza visual y verificar si tienes miopía.'
+      },
+      startTests: 'Iniciar Pruebas',
+      testsCompleted: 'Pruebas Completadas'
     }
   },
   userInformation: {

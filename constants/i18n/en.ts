@@ -57,7 +57,8 @@ export default {
     edit: 'Edit',
     back: 'Back',
     continue: 'Continue',
-    confirm: 'Confirm'
+    confirm: 'Confirm',
+    goBack: 'Go Back'
   },
   home: {
     emptyState: {
@@ -89,6 +90,32 @@ export default {
       visualTestDescription: 'Visit a testing center to complete your vision test',
       transitVerificationDescription: 'This process is automated by the Transit Department',
       helpText: 'Tap on any step to view details and status'
+    },
+    error: {
+      notFound: 'Process not found'
+    },
+    referenceNumber: 'Process Reference Number',
+    visualTest: {
+      description: 'You will complete three visual tests directly on your phone. Please make sure you are in a well-lit room and position your phone at arm\'s length for accurate results.',
+      beforeBegin: 'Before You Begin',
+      holdPhone: 'Hold your phone at arm\'s length',
+      wellLit: 'Make sure you\'re in a well-lit environment',
+      wearGlasses: 'Wear any prescription glasses if you normally use them',
+      threeTests: 'The Three Tests',
+      colorblind: {
+        title: 'Colorblind Test',
+        description: 'You\'ll be shown several images with patterns. Identify the numbers or shapes hidden within the patterns to assess color vision.'
+      },
+      depthPerception: {
+        title: 'Depth Perception Test',
+        description: 'Identify which objects appear closer or further away in a series of images to evaluate your depth perception abilities.'
+      },
+      myopia: {
+        title: 'Myopia Test',
+        description: 'Read letters of decreasing size to determine your visual acuity and check for nearsightedness.'
+      },
+      startTests: 'Start Tests',
+      testsCompleted: 'Tests Completed'
     }
   },
   userInformation: {
