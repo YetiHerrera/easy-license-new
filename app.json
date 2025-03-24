@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "io.yetis.licenses.EasyLicense",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -42,7 +46,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "d770525d-c307-400d-955a-850fdf571386"
+        "projectId": "5ae3a76d-9efe-4f8c-8a15-ff426c7ef566"
       }
     },
     "owner": "yetiherrera"
