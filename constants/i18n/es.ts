@@ -235,5 +235,29 @@ export default {
     delivery: 'Envio a domicilio',
     total: 'Total',
     confirmAndPay: 'Confirmar y proceder al pago'
+  },
+  payment: {
+    title: 'Pago',
+    subtitle: 'Ingresa los detalles de tu tarjeta para completar el pago',
+    cardNumber: 'Número de tarjeta',
+    cardNumberPlaceholder: 'Ingresa tu número de tarjeta',
+    cardNumberRequired: 'El número de tarjeta es requerido',
+    invalidCardNumber: 'Por favor ingresa un número de tarjeta válido',
+    expiryDate: 'Vencimiento',
+    expiryDateRequired: 'La fecha de vencimiento es requerida',
+    invalidExpiryDate: 'Por favor ingresa una fecha de vencimiento válida (MM/AA)',
+    expiredCard: 'Esta tarjeta ha expirado',
+    cvv: 'CVV',
+    cvvRequired: 'El CVV es requerido',
+    invalidCvv: 'Por favor ingresa un CVV válido (3-4 dígitos)',
+    cardholderName: 'Nombre del titular',
+    cardholderNamePlaceholder: 'Nombre completo en la tarjeta',
+    cardholderNameRequired: 'El nombre del titular es requerido',
+    securityNote: 'Tu información de pago es segura y está encriptada',
+    payNow: 'Pagar ahora',
+    processing: 'Procesando...',
+    paymentSuccessTitle: 'Pago Exitoso',
+    paymentSuccessMessage: 'Tu proceso de renovación de licencia ha sido completado exitosamente.',
+    ok: 'OK'
   }
 }; 

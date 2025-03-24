@@ -233,5 +233,29 @@ export default {
     delivery: 'Home Delivery',
     total: 'Total',
     confirmAndPay: 'Confirm and Proceed to Payment'
+  },
+  payment: {
+    title: 'Payment',
+    subtitle: 'Enter your card details to complete the payment',
+    cardNumber: 'Card Number',
+    cardNumberPlaceholder: 'Enter your card number',
+    cardNumberRequired: 'Card number is required',
+    invalidCardNumber: 'Please enter a valid card number',
+    expiryDate: 'Expiry',
+    expiryDateRequired: 'Expiry date is required',
+    invalidExpiryDate: 'Please enter a valid expiry date (MM/YY)',
+    expiredCard: 'This card has expired',
+    cvv: 'CVV',
+    cvvRequired: 'CVV is required',
+    invalidCvv: 'Please enter a valid CVV (3-4 digits)',
+    cardholderName: 'Cardholder Name',
+    cardholderNamePlaceholder: 'Full name on card',
+    cardholderNameRequired: 'Cardholder name is required',
+    securityNote: 'Your payment information is secure and encrypted',
+    payNow: 'Pay Now',
+    processing: 'Processing...',
+    paymentSuccessTitle: 'Payment Successful',
+    paymentSuccessMessage: 'Your license renewal process has been completed successfully.',
+    ok: 'OK'
   }
 }; 

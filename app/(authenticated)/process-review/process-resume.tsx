@@ -55,9 +55,8 @@ export default function ProcessResume() {
   const totalUSD = (totalAmount / mockData.exchangeRate).toFixed(2);
 
   const handleConfirm = () => {
-    // Navigate to payment screen or complete the process
-    console.log('Process confirmed, proceeding to payment');
-    // router.push('/(authenticated)/payment'); // Uncomment when you have a payment screen
+    // Navigate to payment screen
+    router.push('/(authenticated)/process-review/payment' as any);
   };
 
   const getProcessTypeText = () => {
