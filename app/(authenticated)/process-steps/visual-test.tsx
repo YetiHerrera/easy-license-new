@@ -21,8 +21,10 @@ export default function VisualTest() {
   
   const handleStartTests = () => {
     // Navigate to the first test (colorblind test)
-    // Will be implemented later
-    console.log('Start tests');
+    router.push({
+      pathname: '/(authenticated)/process-steps/colorblind-test',
+      params: { id }
+    });
   };
   
   const handleCompleteTest = async () => {

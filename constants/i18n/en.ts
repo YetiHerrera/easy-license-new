@@ -104,7 +104,15 @@ export default {
       threeTests: 'The Three Tests',
       colorblind: {
         title: 'Colorblind Test',
-        description: 'You\'ll be shown several images with patterns. Identify the numbers or shapes hidden within the patterns to assess color vision.'
+        description: 'You\'ll be shown several images with patterns. Identify the numbers or shapes hidden within the patterns to assess color vision.',
+        instructions: 'Look at the image below and enter the number you can see in the pattern.',
+        question: 'What number do you see in the image?',
+        inputPlaceholder: 'Enter number',
+        results: 'Colorblind Test Results',
+        passTitle: 'Good job!',
+        passDescription: 'You have passed the colorblind test. Your color vision appears to be normal.',
+        failTitle: 'Color vision issues detected',
+        failDescription: 'You may have some form of color vision deficiency. This is common and affects about 8% of men and 0.5% of women.'
       },
       depthPerception: {
         title: 'Depth Perception Test',
@@ -115,7 +123,14 @@ export default {
         description: 'Read letters of decreasing size to determine your visual acuity and check for nearsightedness.'
       },
       startTests: 'Start Tests',
-      testsCompleted: 'Tests Completed'
+      testsCompleted: 'Tests Completed',
+      next: 'Next',
+      finish: 'Finish',
+      skip: 'Skip',
+      skipTitle: 'Skip this question?',
+      skipConfirmation: 'Are you sure you want to skip this question? It will be marked as incorrect.',
+      completed: 'Completed',
+      nextTest: 'Next Test'
     }
   },
   userInformation: {

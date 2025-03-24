@@ -104,7 +104,15 @@ export default {
       threeTests: 'Las Tres Pruebas',
       colorblind: {
         title: 'Prueba de Daltonismo',
-        description: 'Se te mostrarán varias imágenes con patrones. Identifica los números o formas ocultas dentro de los patrones para evaluar tu visión de colores.'
+        description: 'Se te mostrarán varias imágenes con patrones. Identifica los números o formas ocultas dentro de los patrones para evaluar tu visión de colores.',
+        instructions: 'Mira la imagen a continuación e ingresa el número que puedes ver en el patrón.',
+        question: '¿Qué número ves en la imagen?',
+        inputPlaceholder: 'Ingresar número',
+        results: 'Resultados de la Prueba de Daltonismo',
+        passTitle: '¡Buen trabajo!',
+        passDescription: 'Has pasado la prueba de daltonismo. Tu visión de colores parece ser normal.',
+        failTitle: 'Problemas de visión de colores detectados',
+        failDescription: 'Es posible que tengas algún tipo de deficiencia en la visión de colores. Esto es común y afecta aproximadamente al 8% de los hombres y al 0.5% de las mujeres.'
       },
       depthPerception: {
         title: 'Prueba de Percepción de Profundidad',
@@ -115,7 +123,14 @@ export default {
         description: 'Lee letras de tamaño decreciente para determinar tu agudeza visual y verificar si tienes miopía.'
       },
       startTests: 'Iniciar Pruebas',
-      testsCompleted: 'Pruebas Completadas'
+      testsCompleted: 'Pruebas Completadas',
+      next: 'Siguiente',
+      finish: 'Finalizar',
+      skip: 'Omitir',
+      skipTitle: '¿Omitir esta pregunta?',
+      skipConfirmation: '¿Estás seguro de que deseas omitir esta pregunta? Se marcará como incorrecta.',
+      completed: 'Completado',
+      nextTest: 'Siguiente Prueba'
     }
   },
   userInformation: {
