@@ -87,7 +87,7 @@ export default function LicenseInformation() {
         bornDate,
       });
       // Navigate to next step
-      router.push('/(authenticated)/process-review/payment' as any);
+      router.push('/(authenticated)/process-review/license-delivery-address' as any);
     }
   };
 

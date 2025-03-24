@@ -186,5 +186,24 @@ export default {
     year: 'Year',
     month: 'Month',
     day: 'Day'
+  },
+  licenseDelivery: {
+    title: 'Delivery Address',
+    subtitle: 'Please provide your US address where you want to receive your license',
+    streetAddress: 'Street Address',
+    streetAddressPlaceholder: 'Enter your street address',
+    streetAddressRequired: 'Street address is required',
+    apartment: 'Apartment/Suite',
+    apartmentPlaceholder: 'Enter apartment or suite number (optional)',
+    city: 'City',
+    cityPlaceholder: 'Enter your city',
+    cityRequired: 'City is required',
+    state: 'State',
+    statePlaceholder: 'Enter your state',
+    stateRequired: 'State is required',
+    zipCode: 'ZIP Code',
+    zipCodePlaceholder: 'Enter your ZIP code',
+    zipCodeRequired: 'ZIP code is required',
+    invalidZipCode: 'Please enter a valid US ZIP code (5 digits or 5+4 format)'
   }
 }; 

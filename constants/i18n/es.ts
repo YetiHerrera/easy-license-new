@@ -188,5 +188,24 @@ export default {
     year: 'Año',
     month: 'Mes',
     day: 'Día'
+  },
+  licenseDelivery: {
+    title: 'Dirección de Entrega',
+    subtitle: 'Por favor, proporcione su dirección en Estados Unidos donde desea recibir su licencia',
+    streetAddress: 'Dirección',
+    streetAddressPlaceholder: 'Ingrese su dirección',
+    streetAddressRequired: 'La dirección es requerida',
+    apartment: 'Apartamento/Suite',
+    apartmentPlaceholder: 'Ingrese número de apartamento o suite (opcional)',
+    city: 'Ciudad',
+    cityPlaceholder: 'Ingrese su ciudad',
+    cityRequired: 'La ciudad es requerida',
+    state: 'Estado',
+    statePlaceholder: 'Ingrese su estado',
+    stateRequired: 'El estado es requerido',
+    zipCode: 'Código Postal',
+    zipCodePlaceholder: 'Ingrese su código postal',
+    zipCodeRequired: 'El código postal es requerido',
+    invalidZipCode: 'Por favor ingrese un código postal válido de Estados Unidos (5 dígitos o formato 5+4)'
   }
 }; 
