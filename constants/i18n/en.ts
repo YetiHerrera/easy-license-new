@@ -116,7 +116,18 @@ export default {
       },
       depthPerception: {
         title: 'Depth Perception Test',
-        description: 'Identify which objects appear closer or further away in a series of images to evaluate your depth perception abilities.'
+        description: 'Identify which objects appear closer or further away in a series of images to evaluate your depth perception abilities.',
+        instructions: 'Look at the images below and tap on the one that appears to be closest to you.',
+        question: 'Which image appears closest to you?',
+        results: 'Depth Perception Test Results',
+        passTitle: 'Good depth perception!',
+        passDescription: 'You have passed the depth perception test. Your ability to perceive depth appears to be normal.',
+        failTitle: 'Depth perception issues detected',
+        failDescription: 'You may have some difficulty with depth perception. This could affect your ability to judge distances while driving.',
+        tip: "Try holding your phone at arm's length and focusing on the center of each image. One image should appear to \"pop out\" or seem closer than the other.",
+        cueText: "Visual cue example:",
+        closerLabel: "Closer",
+        furtherLabel: "Further"
       },
       myopia: {
         title: 'Myopia Test',

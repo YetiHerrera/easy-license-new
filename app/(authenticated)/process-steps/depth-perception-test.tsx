@@ -9,7 +9,6 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
-  TextInput,
   Dimensions,
   Alert
 } from 'react-native';
@@ -22,65 +21,88 @@ import { Ionicons } from '@expo/vector-icons';
 // Get screen dimensions for responsive layout
 const { width, height } = Dimensions.get('window');
 
-// Colorblind test data with images and correct answers
-const colorblindTests = [
-  { id: 1, image: require('@/assets/images/visual-test/7.png'), correctAnswer: '7' },
-  { id: 2, image: require('@/assets/images/visual-test/9.png'), correctAnswer: '9' },
-  { id: 3, image: require('@/assets/images/visual-test/12.png'), correctAnswer: '12' },
-  { id: 4, image: require('@/assets/images/visual-test/74.png'), correctAnswer: '74' },
+// Test data for depth perception
+// Each test contains text elements with styling to create depth perception
+const depthTests = [
+  {
+    id: 1,
+    question: 'Select the letter that appears closest to you:',
+    options: [
+      { text: 'A', isCloser: false },
+      { text: 'B', isCloser: true },
+      { text: 'C', isCloser: false },
+      { text: 'D', isCloser: false }
+    ]
+  },
+  {
+    id: 2,
+    question: 'Which number seems to float above the screen?',
+    options: [
+      { text: '3', isCloser: false },
+      { text: '7', isCloser: false },
+      { text: '5', isCloser: true },
+      { text: '9', isCloser: false }
+    ]
+  },
+  {
+    id: 3,
+    question: 'Select the symbol that appears closest to you:',
+    options: [
+      { text: '◯', isCloser: false },
+      { text: '△', isCloser: false },
+      { text: '□', isCloser: false },
+      { text: '★', isCloser: true }
+    ]
+  }
 ];
 
-// Interface for the visual test progress
-interface VisualTestProgress {
-  completed: boolean;
-  score: number;
-  total: number;
-}
-
-export default function ColorblindTest() {
+export default function DepthPerceptionTest() {
   const { id } = useLocalSearchParams();
   const { completedProcesses, updateProcessVerificationStep } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<string[]>(Array(colorblindTests.length).fill(''));
-  const [currentAnswer, setCurrentAnswer] = useState('');
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
+  const [userAnswers, setUserAnswers] = useState<number[]>(Array(depthTests.length).fill(-1));
   const [testCompleted, setTestCompleted] = useState(false);
   const [score, setScore] = useState(0);
   
-  const currentTest = colorblindTests[currentTestIndex];
+  const currentTest = depthTests[currentTestIndex];
   
   const handleGoBack = () => {
-    if (currentTestIndex > 0) {
-      setCurrentTestIndex(currentTestIndex - 1);
-      setCurrentAnswer(userAnswers[currentTestIndex - 1]);
-    } else {
-      router.back();
-    }
+    router.back();
+  };
+  
+  const handleOptionSelect = (index: number) => {
+    setSelectedOptionIndex(index);
   };
   
   const handleNext = () => {
+    if (selectedOptionIndex === null) return;
+    
     // Save current answer
     const newAnswers = [...userAnswers];
-    newAnswers[currentTestIndex] = currentAnswer;
+    newAnswers[currentTestIndex] = selectedOptionIndex;
     setUserAnswers(newAnswers);
     
-    if (currentTestIndex < colorblindTests.length - 1) {
+    if (currentTestIndex < depthTests.length - 1) {
       // Move to next test
       setCurrentTestIndex(currentTestIndex + 1);
-      setCurrentAnswer(userAnswers[currentTestIndex + 1]);
+      setSelectedOptionIndex(null);
     } else {
       // Calculate score
       const correctAnswers = newAnswers.filter(
-        (answer, index) => answer === colorblindTests[index].correctAnswer
+        (answer, index) => {
+          if (answer === -1) return false;
+          return depthTests[index].options[answer].isCloser;
+        }
       ).length;
       
       setScore(correctAnswers);
       setTestCompleted(true);
       
-      // Save progress to context - in a real implementation, we would update this
-      // For now, using updateProcessVerificationStep as a placeholder
+      // Save progress to context
       if (id) {
         // Using 'visualTest' as the verification step since that's what's defined in the context
         updateProcessVerificationStep(id.toString(), 'visualTest', true);
@@ -89,11 +111,9 @@ export default function ColorblindTest() {
   };
   
   const handleNextTest = () => {
-    // Navigate to the next test (depth perception)
-    router.push({
-      pathname: '/(authenticated)/process-steps/depth-perception-test',
-      params: { id }
-    });
+    // Navigate to the next test (myopia test)
+    // This will be implemented later
+    router.back(); // For now, just go back
   };
   
   const handleSkip = () => {
@@ -109,16 +129,19 @@ export default function ColorblindTest() {
           text: t('process.visualTest.skip'),
           onPress: () => {
             const newAnswers = [...userAnswers];
-            newAnswers[currentTestIndex] = '';
+            newAnswers[currentTestIndex] = -1; // -1 indicates skipped
             setUserAnswers(newAnswers);
             
-            if (currentTestIndex < colorblindTests.length - 1) {
+            if (currentTestIndex < depthTests.length - 1) {
               setCurrentTestIndex(currentTestIndex + 1);
-              setCurrentAnswer(userAnswers[currentTestIndex + 1]);
+              setSelectedOptionIndex(null);
             } else {
               // Calculate score with skipped answers
               const correctAnswers = newAnswers.filter(
-                (answer, index) => answer === colorblindTests[index].correctAnswer
+                (answer, index) => {
+                  if (answer === -1) return false;
+                  return depthTests[index].options[answer].isCloser;
+                }
               ).length;
               
               setScore(correctAnswers);
@@ -126,7 +149,6 @@ export default function ColorblindTest() {
               
               // Save progress to context
               if (id) {
-                // Using 'visualTest' as the verification step since that's what's defined in the context
                 updateProcessVerificationStep(id.toString(), 'visualTest', true);
               }
             }
@@ -146,8 +168,8 @@ export default function ColorblindTest() {
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
           {testCompleted 
-            ? t('process.visualTest.colorblind.results') 
-            : t('process.visualTest.colorblind.title')}
+            ? t('process.visualTest.depthPerception.results') 
+            : t('process.visualTest.depthPerception.title')}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -158,7 +180,7 @@ export default function ColorblindTest() {
             style={[
               styles.progressFill, 
               { 
-                width: `${testCompleted ? 100 : (currentTestIndex / colorblindTests.length) * 100}%`,
+                width: `${testCompleted ? 100 : (currentTestIndex / depthTests.length) * 100}%`,
                 backgroundColor: theme.primary 
               }
             ]} 
@@ -167,7 +189,7 @@ export default function ColorblindTest() {
         <Text style={[styles.progressText, { color: theme.text }]}>
           {testCompleted 
             ? t('process.visualTest.completed') 
-            : `${currentTestIndex + 1}/${colorblindTests.length}`}
+            : `${currentTestIndex + 1}/${depthTests.length}`}
         </Text>
       </View>
       
@@ -179,31 +201,50 @@ export default function ColorblindTest() {
         {!testCompleted ? (
           <>
             <Text style={[styles.description, { color: theme.text }]}>
-              {t('process.visualTest.colorblind.instructions')}
+              {currentTest.question}
             </Text>
             
-            <View style={[styles.imageContainer, { backgroundColor: theme.formInputBackground }]}>
-              <Image
-                source={currentTest.image}
-                style={styles.testImage}
-                resizeMode="contain"
-              />
-            </View>
-            
-            <Text style={[styles.questionText, { color: theme.text }]}>
-              {t('process.visualTest.colorblind.question')}
-            </Text>
-            
-            <View style={[styles.inputContainer, { backgroundColor: theme.formInputBackground }]}>
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                value={currentAnswer}
-                onChangeText={setCurrentAnswer}
-                placeholder={t('process.visualTest.colorblind.inputPlaceholder')}
-                placeholderTextColor="#999"
-                keyboardType="number-pad"
-                maxLength={3}
-              />
+            <View style={styles.imagesContainer}>
+              {currentTest.options.map((option, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.depthTextContainer,
+                    { 
+                      borderColor: selectedOptionIndex === index ? theme.primary : 'transparent',
+                      borderWidth: selectedOptionIndex === index ? 3 : 0,
+                      backgroundColor: theme.formInputBackground
+                    }
+                  ]}
+                  onPress={() => handleOptionSelect(index)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.depthText, 
+                    { 
+                      color: theme.text,
+                      textShadowColor: 'rgba(0, 0, 0, ' + (option.isCloser ? '0.5' : '0.1') + ')',
+                      textShadowOffset: { width: option.isCloser ? 2 : 0, height: option.isCloser ? 4 : 1 },
+                      textShadowRadius: option.isCloser ? 6 : 2,
+                      transform: [
+                        { scale: option.isCloser ? 1.05 : 1 },
+                        { translateY: option.isCloser ? -3 : 0 }
+                      ],
+                      opacity: option.isCloser ? 1 : 0.9,
+                      elevation: option.isCloser ? 10 : 2,
+                      shadowColor: "#000",
+                      shadowOffset: { 
+                        width: option.isCloser ? 1 : 0, 
+                        height: option.isCloser ? 6 : 2 
+                      },
+                      shadowOpacity: option.isCloser ? 0.4 : 0.1,
+                      shadowRadius: option.isCloser ? 8 : 3
+                    }
+                  ]}>
+                    {option.text}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
             
             <View style={styles.buttonRow}>
@@ -218,14 +259,14 @@ export default function ColorblindTest() {
               
               <TouchableOpacity 
                 style={[styles.nextButton, { 
-                  backgroundColor: currentAnswer.trim() ? theme.primary : theme.formInputBackground,
-                  opacity: currentAnswer.trim() ? 1 : 0.7
+                  backgroundColor: selectedOptionIndex !== null ? theme.primary : theme.formInputBackground,
+                  opacity: selectedOptionIndex !== null ? 1 : 0.7
                 }]}
                 onPress={handleNext}
-                disabled={!currentAnswer.trim()}
+                disabled={selectedOptionIndex === null}
               >
                 <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
-                  {currentTestIndex < colorblindTests.length - 1 
+                  {currentTestIndex < depthTests.length - 1 
                     ? t('process.visualTest.next') 
                     : t('process.visualTest.finish')}
                 </Text>
@@ -235,21 +276,21 @@ export default function ColorblindTest() {
         ) : (
           <View style={styles.resultsContainer}>
             <View style={[styles.scoreCircle, {
-              backgroundColor: score >= colorblindTests.length / 2 ? '#34C759' : '#FF3B30'
+              backgroundColor: score >= depthTests.length / 2 ? '#34C759' : '#FF3B30'
             }]}>
-              <Text style={styles.scoreText}>{score}/{colorblindTests.length}</Text>
+              <Text style={styles.scoreText}>{score}/{depthTests.length}</Text>
             </View>
             
             <Text style={[styles.resultTitle, { color: theme.text }]}>
-              {score >= colorblindTests.length / 2 
-                ? t('process.visualTest.colorblind.passTitle') 
-                : t('process.visualTest.colorblind.failTitle')}
+              {score >= depthTests.length / 2 
+                ? t('process.visualTest.depthPerception.passTitle') 
+                : t('process.visualTest.depthPerception.failTitle')}
             </Text>
             
             <Text style={[styles.resultDescription, { color: theme.text }]}>
-              {score >= colorblindTests.length / 2 
-                ? t('process.visualTest.colorblind.passDescription') 
-                : t('process.visualTest.colorblind.failDescription')}
+              {score >= depthTests.length / 2 
+                ? t('process.visualTest.depthPerception.passDescription') 
+                : t('process.visualTest.depthPerception.failDescription')}
             </Text>
             
             <TouchableOpacity 
@@ -319,36 +360,32 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 24,
-    lineHeight: 24,
+    fontWeight: '500',
+    textAlign: 'center',
   },
-  imageContainer: {
+  imagesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
     width: '100%',
+    paddingVertical: 20,
+  },
+  depthTextContainer: {
+    width: '40%',
     aspectRatio: 1,
     borderRadius: 12,
+    margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
-    marginBottom: 32,
+    position: 'relative',
   },
-  testImage: {
-    width: '90%',
-    height: '90%',
-  },
-  questionText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 16,
-  },
-  inputContainer: {
-    borderRadius: 8,
-    marginBottom: 32,
-  },
-  input: {
-    fontSize: 18,
-    padding: 16,
-    textAlign: 'center',
+  depthText: {
+    fontSize: 70,
+    fontWeight: 'bold',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -378,7 +415,6 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
   },
   resultsContainer: {
     alignItems: 'center',

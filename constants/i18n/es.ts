@@ -116,7 +116,18 @@ export default {
       },
       depthPerception: {
         title: 'Prueba de Percepción de Profundidad',
-        description: 'Identifica qué objetos aparecen más cerca o más lejos en una serie de imágenes para evaluar tus habilidades de percepción de profundidad.'
+        description: 'Identifica qué objetos aparecen más cerca o más lejos en una serie de imágenes para evaluar tus habilidades de percepción de profundidad.',
+        instructions: 'Mira las imágenes a continuación y toca la que te parezca más cercana a ti.',
+        question: '¿Qué imagen te parece más cercana?',
+        results: 'Resultados de la Prueba de Percepción de Profundidad',
+        passTitle: '¡Buena percepción de profundidad!',
+        passDescription: 'Has pasado la prueba de percepción de profundidad. Tu capacidad para percibir la profundidad parece ser normal.',
+        failTitle: 'Problemas de percepción de profundidad detectados',
+        failDescription: 'Es posible que tengas alguna dificultad con la percepción de profundidad. Esto podría afectar tu capacidad para juzgar distancias mientras conduces.',
+        tip: "Intenta sostener tu teléfono a la distancia del brazo extendido y enfócate en el centro de cada imagen. Una imagen debería \"sobresalir\" o parecer más cercana que la otra.",
+        cueText: "Ejemplo de indicación visual:",
+        closerLabel: "Más cerca",
+        furtherLabel: "Más lejos"
       },
       myopia: {
         title: 'Prueba de Miopía',

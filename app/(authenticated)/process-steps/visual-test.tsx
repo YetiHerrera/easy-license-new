@@ -136,7 +136,7 @@ export default function VisualTest() {
           </Text>
         </View>
         
-        {!process.visualTestCompleted && (
+        {process.visualTestCompleted && (
           <TouchableOpacity 
             style={[styles.startButton, { backgroundColor: theme.primary }]}
             onPress={handleStartTests}
@@ -145,7 +145,7 @@ export default function VisualTest() {
           </TouchableOpacity>
         )}
         
-        {process.visualTestCompleted && (
+        {!process.visualTestCompleted && (
           <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
             <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
             <Text style={styles.completedText}>{t('process.visualTest.testsCompleted')}</Text>
