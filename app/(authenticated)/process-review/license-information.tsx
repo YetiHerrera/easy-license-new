@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -8,10 +8,10 @@ import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import FormInput from '@/components/auth/FormInput';
 
-type LicenseType = 'A' | 'B' | 'C' | 'M' | 'E';
+type LicenseType = 'A' | 'B' | 'C' | 'M' | 'E' | 'unselected';
 
-const LICENSE_TYPES: LicenseType[] = ['A', 'B', 'C', 'M', 'E'];
-const RENEWAL_YEARS = [1, 2, 3, 4, 5];
+const LICENSE_TYPES: LicenseType[] = ['unselected', 'A', 'B', 'C', 'M', 'E'];
+const RENEWAL_YEARS: string[] = ['unselected', '1', '2', '3', '4', '5'];
 
 export default function LicenseInformation() {
   const colorScheme = useColorScheme() || 'light';
@@ -20,8 +20,8 @@ export default function LicenseInformation() {
   const [dpi, setDpi] = useState('');
   const [names, setNames] = useState('');
   const [lastNames, setLastNames] = useState('');
-  const [licenseType, setLicenseType] = useState<LicenseType>('A');
-  const [renewalYears, setRenewalYears] = useState('1');
+  const [licenseType, setLicenseType] = useState<LicenseType>('unselected');
+  const [renewalYears, setRenewalYears] = useState('unselected');
   const [bornDate, setBornDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showLicenseTypePicker, setShowLicenseTypePicker] = useState(false);
@@ -324,8 +324,8 @@ export default function LicenseInformation() {
       dpi.length >= 8 &&
       names.trim().length > 0 &&
       lastNames.trim().length > 0 &&
-      licenseType &&
-      renewalYears &&
+      licenseType !== 'unselected' &&
+      renewalYears !== 'unselected' &&
       bornDate &&
       !errors.dpi &&
       !errors.names &&
@@ -345,157 +345,183 @@ export default function LicenseInformation() {
         }}
       />
       
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.formContainer}>
-          <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
-            {t('licenseInformation.title')}
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.text }]}>
-            {t('licenseInformation.subtitle')}
-          </Text>
-          
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.dpi')}
-            </Text>
-            <FormInput
-              value={dpi}
-              onChangeText={setDpi}
-              placeholder={t('licenseInformation.dpiOrPassportPlaceholder')}
-              keyboardType="default"
-              error={errors.dpi}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.names')}
-            </Text>
-            <FormInput
-              value={names}
-              onChangeText={setNames}
-              placeholder={t('licenseInformation.namesPlaceholder')}
-              error={errors.names}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.lastNames')}
-            </Text>
-            <FormInput
-              value={lastNames}
-              onChangeText={setLastNames}
-              placeholder={t('licenseInformation.lastNamesPlaceholder')}
-              error={errors.lastNames}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.licenseType')}
-            </Text>
-            <Pressable
-              style={[styles.pickerButton, { 
-                backgroundColor: theme.formInputBackground,
-                borderColor: theme.formInputBorder,
-                borderWidth: 1,
-                height: 60,
-                marginBottom: 15,
-                borderRadius: 10,
-                paddingHorizontal: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }]}
-              onPress={() => setShowLicenseTypePicker(true)}
-            >
-              <Text style={[styles.pickerButtonText, { color: theme.text }]}>
-                {licenseType}
-              </Text>
-              <Ionicons name="chevron-down" size={20} color={theme.text} />
-            </Pressable>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.renewalYears')}
-            </Text>
-            <Pressable
-              style={[styles.pickerButton, { 
-                backgroundColor: theme.formInputBackground,
-                borderColor: theme.formInputBorder,
-                borderWidth: 1,
-                height: 60,
-                borderRadius: 10,
-                marginBottom: 15,
-                paddingHorizontal: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }]}
-              onPress={() => setShowRenewalYearsPicker(true)}
-            >
-              <Text style={[styles.pickerButtonText, { color: theme.text }]}>
-                {renewalYears} {t('licenseInformation.years')}
-              </Text>
-              <Ionicons name="chevron-down" size={20} color={theme.text} />
-            </Pressable>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseInformation.bornDate')}
-            </Text>
-            <Pressable
-              style={[styles.pickerButton, { 
-                backgroundColor: theme.formInputBackground,
-                borderColor: theme.formInputBorder,
-                borderWidth: 1,
-                height: 60,
-                borderRadius: 10,
-                paddingHorizontal: 16,
-                marginBottom: 15,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }]}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={[styles.pickerButtonText, { color: theme.text }]}>
-                {bornDate.toLocaleDateString()}
-              </Text>
-              <Ionicons name="calendar" size={20} color={theme.text} />
-            </Pressable>
-            {errors.bornDate ? (
-              <Text style={[styles.errorText, { color: theme.danger }]}>
-                {errors.bornDate}
-              </Text>
-            ) : null}
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.submitButton, 
-            { 
-              backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
-              opacity: isFormValid() ? 1 : 0.5,
-            }
-          ]}
-          onPress={handleSubmit}
-          disabled={!isFormValid()}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          style={styles.scrollView} 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={[
-            styles.submitButtonText,
-            { color: isFormValid() ? '#FFFFFF' : theme.text }
-          ]}>
-            {t('common.continue')}
-          </Text>
-        </Pressable>
-      </View>
+          <View style={styles.formContainer}>
+            <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
+              {t('licenseInformation.title')}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.text }]}>
+              {t('licenseInformation.subtitle')}
+            </Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.dpi')}
+              </Text>
+              <FormInput
+                value={dpi}
+                onChangeText={setDpi}
+                placeholder={t('licenseInformation.dpiOrPassportPlaceholder')}
+                keyboardType="default"
+                error={errors.dpi}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.names')}
+              </Text>
+              <FormInput
+                value={names}
+                onChangeText={setNames}
+                placeholder={t('licenseInformation.namesPlaceholder')}
+                error={errors.names}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.lastNames')}
+              </Text>
+              <FormInput
+                value={lastNames}
+                onChangeText={setLastNames}
+                placeholder={t('licenseInformation.lastNamesPlaceholder')}
+                error={errors.lastNames}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.licenseType')}
+              </Text>
+              <Pressable
+                style={[styles.pickerButton, { 
+                  backgroundColor: theme.formInputBackground,
+                  borderColor: theme.formInputBorder,
+                  borderWidth: 1,
+                  height: 60,
+                  marginBottom: 15,
+                  borderRadius: 10,
+                  paddingHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }]}
+                onPress={() => setShowLicenseTypePicker(true)}
+              >
+                <Text style={[
+                  styles.pickerButtonText, 
+                  { 
+                    color: theme.text 
+                  }
+                ]}>
+                  {licenseType === 'unselected' 
+                    ? t('licenseInformation.selectLicenseType')
+                    : licenseType
+                  }
+                </Text>
+                <Ionicons name="chevron-down" size={20} color={theme.text} />
+              </Pressable>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.renewalYears')}
+              </Text>
+              <Pressable
+                style={[styles.pickerButton, { 
+                  backgroundColor: theme.formInputBackground,
+                  borderColor: theme.formInputBorder,
+                  borderWidth: 1,
+                  height: 60,
+                  borderRadius: 10,
+                  marginBottom: 15,
+                  paddingHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }]}
+                onPress={() => setShowRenewalYearsPicker(true)}
+              >
+                <Text style={[
+                  styles.pickerButtonText, 
+                  { 
+                    color: theme.text 
+                  }
+                ]}>
+                  {renewalYears === 'unselected'
+                    ? t('licenseInformation.selectRenewalYears')
+                    : `${renewalYears} ${t('licenseInformation.years')}`
+                  }
+                </Text>
+                <Ionicons name="chevron-down" size={20} color={theme.text} />
+              </Pressable>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseInformation.bornDate')}
+              </Text>
+              <Pressable
+                style={[styles.pickerButton, { 
+                  backgroundColor: theme.formInputBackground,
+                  borderColor: theme.formInputBorder,
+                  borderWidth: 1,
+                  height: 60,
+                  borderRadius: 10,
+                  paddingHorizontal: 16,
+                  marginBottom: 15,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }]}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text style={[styles.pickerButtonText, { color: theme.text }]}>
+                  {bornDate.toLocaleDateString()}
+                </Text>
+                <Ionicons name="calendar" size={20} color={theme.text} />
+              </Pressable>
+              {errors.bornDate ? (
+                <Text style={[styles.errorText, { color: theme.danger }]}>
+                  {errors.bornDate}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={[
+              styles.submitButton, 
+              { 
+                backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
+                opacity: isFormValid() ? 1 : 0.5,
+              }
+            ]}
+            onPress={handleSubmit}
+            disabled={!isFormValid()}
+          >
+            <Text style={[
+              styles.submitButtonText,
+              { color: isFormValid() ? '#FFFFFF' : theme.text }
+            ]}>
+              {t('common.continue')}
+            </Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
 
       <CustomPicker
         visible={showLicenseTypePicker}

@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -161,115 +161,125 @@ export default function LicenseDeliveryAddress() {
         }}
       />
       
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.formContainer}>
-          <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
-            {t('licenseDelivery.title')}
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.text }]}>
-            {t('licenseDelivery.subtitle')}
-          </Text>
-          
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseDelivery.state')}
-            </Text>
-            <Pressable
-              style={[styles.pickerButton, { 
-                backgroundColor: theme.formInputBackground,
-                borderColor: theme.formInputBorder,
-                borderWidth: 1,
-                height: 60,
-                borderRadius: 10,
-                paddingHorizontal: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }]}
-              onPress={() => setShowStatePicker(true)}
-            >
-              <Text style={[styles.pickerButtonText, { color: theme.text }]}>
-                {state || t('licenseDelivery.statePlaceholder')}
-              </Text>
-              <Ionicons name="chevron-down" size={20} color={theme.text} />
-            </Pressable>
-            {errors.state ? (
-              <Text style={[styles.errorText, { color: theme.danger }]}>
-                {errors.state}
-              </Text>
-            ) : null}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseDelivery.city')}
-            </Text>
-            <FormInput
-              value={city}
-              onChangeText={setCity}
-              placeholder={t('licenseDelivery.cityPlaceholder')}
-              error={errors.city}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseDelivery.zipCode')}
-            </Text>
-            <FormInput
-              value={zipCode}
-              onChangeText={setZipCode}
-              placeholder={t('licenseDelivery.zipCodePlaceholder')}
-              keyboardType="numeric"
-              error={errors.zipCode}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseDelivery.streetAddress')}
-            </Text>
-            <FormInput
-              value={streetAddress}
-              onChangeText={setStreetAddress}
-              placeholder={t('licenseDelivery.streetAddressPlaceholder')}
-              error={errors.streetAddress}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>
-              {t('licenseDelivery.apartment')}
-            </Text>
-            <FormInput
-              value={apartment}
-              onChangeText={setApartment}
-              placeholder={t('licenseDelivery.apartmentPlaceholder')}
-            />
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.submitButton, 
-            { 
-              backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
-              opacity: isFormValid() ? 1 : 0.5,
-            }
-          ]}
-          onPress={handleSubmit}
-          disabled={!isFormValid()}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          style={styles.scrollView} 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={[
-            styles.submitButtonText,
-            { color: isFormValid() ? '#FFFFFF' : theme.text }
-          ]}>
-            {t('common.continue')}
-          </Text>
-        </Pressable>
-      </View>
+          <View style={styles.formContainer}>
+            <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
+              {t('licenseDelivery.title')}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.text }]}>
+              {t('licenseDelivery.subtitle')}
+            </Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseDelivery.state')}
+              </Text>
+              <Pressable
+                style={[styles.pickerButton, { 
+                  backgroundColor: theme.formInputBackground,
+                  borderColor: theme.formInputBorder,
+                  borderWidth: 1,
+                  height: 60,
+                  borderRadius: 10,
+                  paddingHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }]}
+                onPress={() => setShowStatePicker(true)}
+              >
+                <Text style={[styles.pickerButtonText, { color: theme.text }]}>
+                  {state || t('licenseDelivery.statePlaceholder')}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color={theme.text} />
+              </Pressable>
+              {errors.state ? (
+                <Text style={[styles.errorText, { color: theme.danger }]}>
+                  {errors.state}
+                </Text>
+              ) : null}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseDelivery.city')}
+              </Text>
+              <FormInput
+                value={city}
+                onChangeText={setCity}
+                placeholder={t('licenseDelivery.cityPlaceholder')}
+                error={errors.city}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseDelivery.zipCode')}
+              </Text>
+              <FormInput
+                value={zipCode}
+                onChangeText={setZipCode}
+                placeholder={t('licenseDelivery.zipCodePlaceholder')}
+                keyboardType="numeric"
+                error={errors.zipCode}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseDelivery.streetAddress')}
+              </Text>
+              <FormInput
+                value={streetAddress}
+                onChangeText={setStreetAddress}
+                placeholder={t('licenseDelivery.streetAddressPlaceholder')}
+                error={errors.streetAddress}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('licenseDelivery.apartment')}
+              </Text>
+              <FormInput
+                value={apartment}
+                onChangeText={setApartment}
+                placeholder={t('licenseDelivery.apartmentPlaceholder')}
+              />
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={[
+              styles.submitButton, 
+              { 
+                backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
+                opacity: isFormValid() ? 1 : 0.5,
+              }
+            ]}
+            onPress={handleSubmit}
+            disabled={!isFormValid()}
+          >
+            <Text style={[
+              styles.submitButtonText,
+              { color: isFormValid() ? '#FFFFFF' : theme.text }
+            ]}>
+              {t('common.continue')}
+            </Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
 
       <CustomPicker
         visible={showStatePicker}

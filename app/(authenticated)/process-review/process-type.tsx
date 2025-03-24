@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -36,115 +36,125 @@ export default function ProcessType() {
         }}
       />
       
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.formContainer}>
-          <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
-            {t('processType.title')}
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.text }]}>
-            {t('processType.subtitle')}
-          </Text>
-          
-          <View style={styles.optionsContainer}>
-            <Pressable
-              style={[
-                styles.optionCard,
-                { 
-                  backgroundColor: theme.formInputBackground,
-                  borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
-                  borderWidth: selectedProcess === 'renewal' ? 2 : 1,
-                }
-              ]}
-              onPress={() => setSelectedProcess('renewal')}
-            >
-              <View style={[
-                styles.iconContainer, 
-                { backgroundColor: theme.success + '20' }
-              ]}>
-                <Ionicons 
-                  name="add-circle" 
-                  size={24} 
-                  color={theme.success} 
-                />
-              </View>
-              <View style={styles.optionTextContainer}>
-                <Text style={[styles.optionTitle, { color: theme.text }]}>
-                  {t('processType.renewal')}
-                </Text>
-                <Text style={[styles.optionDescription, { color: theme.text }]}>
-                  {t('processType.renewalDescription')}
-                </Text>
-              </View>
-              <View style={[
-                styles.radioButton, 
-                { 
-                  borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
-                  backgroundColor: selectedProcess === 'renewal' ? theme.primary : 'transparent',
-                }
-              ]} />
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.optionCard,
-                { 
-                  backgroundColor: theme.formInputBackground,
-                  borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
-                  borderWidth: selectedProcess === 'replacement' ? 2 : 1,
-                }
-              ]}
-              onPress={() => setSelectedProcess('replacement')}
-            >
-              <View style={[
-                styles.iconContainer, 
-                { backgroundColor: theme.primary + '20' }
-              ]}>
-                <MaterialCommunityIcons 
-                  name="folder-cog" 
-                  size={24} 
-                  color={theme.primary} 
-                />
-              </View>
-              <View style={styles.optionTextContainer}>
-                <Text style={[styles.optionTitle, { color: theme.text }]}>
-                  {t('processType.replacement')}
-                </Text>
-                <Text style={[styles.optionDescription, { color: theme.text }]}>
-                  {t('processType.replacementDescription')}
-                </Text>
-              </View>
-              <View style={[
-                styles.radioButton, 
-                { 
-                  borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
-                  backgroundColor: selectedProcess === 'replacement' ? theme.primary : 'transparent',
-                }
-              ]} />
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.submitButton, 
-            { 
-              backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
-              opacity: isFormValid() ? 1 : 0.5,
-            }
-          ]}
-          onPress={handleSubmit}
-          disabled={!isFormValid()}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          style={styles.scrollView} 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={[
-            styles.submitButtonText,
-            { color: isFormValid() ? '#FFFFFF' : theme.text }
-          ]}>
-            {t('common.continue')}
-          </Text>
-        </Pressable>
-      </View>
+          <View style={styles.formContainer}>
+            <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
+              {t('processType.title')}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.text }]}>
+              {t('processType.subtitle')}
+            </Text>
+            
+            <View style={styles.optionsContainer}>
+              <Pressable
+                style={[
+                  styles.optionCard,
+                  { 
+                    backgroundColor: theme.formInputBackground,
+                    borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
+                    borderWidth: selectedProcess === 'renewal' ? 2 : 1,
+                  }
+                ]}
+                onPress={() => setSelectedProcess('renewal')}
+              >
+                <View style={[
+                  styles.iconContainer, 
+                  { backgroundColor: theme.success + '20' }
+                ]}>
+                  <Ionicons 
+                    name="add-circle" 
+                    size={24} 
+                    color={theme.success} 
+                  />
+                </View>
+                <View style={styles.optionTextContainer}>
+                  <Text style={[styles.optionTitle, { color: theme.text }]}>
+                    {t('processType.renewal')}
+                  </Text>
+                  <Text style={[styles.optionDescription, { color: theme.text }]}>
+                    {t('processType.renewalDescription')}
+                  </Text>
+                </View>
+                <View style={[
+                  styles.radioButton, 
+                  { 
+                    borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
+                    backgroundColor: selectedProcess === 'renewal' ? theme.primary : 'transparent',
+                  }
+                ]} />
+              </Pressable>
+
+              <Pressable
+                style={[
+                  styles.optionCard,
+                  { 
+                    backgroundColor: theme.formInputBackground,
+                    borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
+                    borderWidth: selectedProcess === 'replacement' ? 2 : 1,
+                  }
+                ]}
+                onPress={() => setSelectedProcess('replacement')}
+              >
+                <View style={[
+                  styles.iconContainer, 
+                  { backgroundColor: theme.primary + '20' }
+                ]}>
+                  <MaterialCommunityIcons 
+                    name="folder-cog" 
+                    size={24} 
+                    color={theme.primary} 
+                  />
+                </View>
+                <View style={styles.optionTextContainer}>
+                  <Text style={[styles.optionTitle, { color: theme.text }]}>
+                    {t('processType.replacement')}
+                  </Text>
+                  <Text style={[styles.optionDescription, { color: theme.text }]}>
+                    {t('processType.replacementDescription')}
+                  </Text>
+                </View>
+                <View style={[
+                  styles.radioButton, 
+                  { 
+                    borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
+                    backgroundColor: selectedProcess === 'replacement' ? theme.primary : 'transparent',
+                  }
+                ]} />
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={[
+              styles.submitButton, 
+              { 
+                backgroundColor: isFormValid() ? theme.primary : theme.formInputBackgroundDisabled,
+                opacity: isFormValid() ? 1 : 0.5,
+              }
+            ]}
+            onPress={handleSubmit}
+            disabled={!isFormValid()}
+          >
+            <Text style={[
+              styles.submitButtonText,
+              { color: isFormValid() ? '#FFFFFF' : theme.text }
+            ]}>
+              {t('common.continue')}
+            </Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
