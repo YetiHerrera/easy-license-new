@@ -181,143 +181,137 @@ export default function ColorblindTest() {
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
       >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.innerContainer}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color={theme.text} />
-              </TouchableOpacity>
-              <Text style={[styles.title, { color: theme.text }]}>
-                {testCompleted 
-                  ? t('process.visualTest.colorblind.results') 
-                  : t('process.visualTest.colorblind.title')}
-              </Text>
-              <View style={styles.placeholder} />
+        <View style={styles.innerContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {testCompleted 
+                ? t('process.visualTest.colorblind.results') 
+                : t('process.visualTest.colorblind.title')}
+            </Text>
+            <View style={styles.placeholder} />
+          </View>
+          
+          <View style={styles.progressContainer}>
+            <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
+              <View 
+                style={[
+                  styles.progressFill, 
+                  { 
+                    width: `${testCompleted ? 100 : (currentTestIndex / colorblindTests.length) * 100}%`,
+                    backgroundColor: theme.primary 
+                  }
+                ]} 
+              />
             </View>
-            
-            <View style={styles.progressContainer}>
-              <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
-                <View 
-                  style={[
-                    styles.progressFill, 
-                    { 
-                      width: `${testCompleted ? 100 : (currentTestIndex / colorblindTests.length) * 100}%`,
-                      backgroundColor: theme.primary 
-                    }
-                  ]} 
-                />
-              </View>
-              <Text style={[styles.progressText, { color: theme.text }]}>
-                {testCompleted 
-                  ? t('process.visualTest.completed') 
-                  : `${currentTestIndex + 1}/${colorblindTests.length}`}
-              </Text>
-            </View>
-            
-            <ScrollView 
-              style={styles.scrollView} 
-              contentContainerStyle={[
-                styles.scrollContent,
-                keyboardVisible && Platform.OS === 'ios' ? { paddingBottom: 20 } : {}
-              ]}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-            >
-              {!testCompleted ? (
-                <>
-                  <Text style={[styles.description, { color: theme.text }]}>
-                    {t('process.visualTest.colorblind.instructions')}
-                  </Text>
-                  
-                  <View style={[styles.imageContainer, { backgroundColor: theme.formInputBackground }]}>
-                    <Image
-                      source={currentTest.image}
-                      style={styles.testImage}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  
-                  <Text style={[styles.questionText, { color: theme.text }]}>
-                    {t('process.visualTest.colorblind.question')}
-                  </Text>
-                  
-                  <View style={[styles.inputContainer, { backgroundColor: theme.formInputBackground }]}>
-                    <TextInput
-                      style={[styles.input, { color: theme.text }]}
-                      value={currentAnswer}
-                      onChangeText={setCurrentAnswer}
-                      placeholder={t('process.visualTest.colorblind.inputPlaceholder')}
-                      placeholderTextColor="#999"
-                      keyboardType="number-pad"
-                      maxLength={3}
-                      returnKeyType="done"
-                      onSubmitEditing={dismissKeyboard}
-                    />
-                  </View>
-                  
-                  <View style={[styles.buttonRow, Platform.OS === 'ios' && keyboardVisible ? styles.keyboardVisibleButtons : {}]}>
-                    <TouchableOpacity 
-                      style={[styles.skipButton, { borderColor: theme.text }]}
-                      onPress={handleSkip}
-                    >
-                      <Text style={[styles.skipButtonText, { color: theme.text }]}>
-                        {t('process.visualTest.skip')}
-                      </Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity 
-                      style={[styles.nextButton, { 
-                        backgroundColor: currentAnswer.trim() ? theme.primary : theme.formInputBackground,
-                        opacity: currentAnswer.trim() ? 1 : 0.7
-                      }]}
-                      onPress={handleNext}
-                      disabled={!currentAnswer.trim()}
-                    >
-                      <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
-                        {currentTestIndex < colorblindTests.length - 1 
-                          ? t('process.visualTest.next') 
-                          : t('process.visualTest.finish')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : (
-                <View style={styles.resultsContainer}>
-                  <View style={[styles.scoreCircle, {
-                    backgroundColor: score >= colorblindTests.length / 2 ? '#34C759' : '#FF3B30'
-                  }]}>
-                    <Text style={styles.scoreText}>{score}/{colorblindTests.length}</Text>
-                  </View>
-                  
-                  <Text style={[styles.resultTitle, { color: theme.text }]}>
-                    {score >= colorblindTests.length / 2 
-                      ? t('process.visualTest.colorblind.passTitle') 
-                      : t('process.visualTest.colorblind.failTitle')}
-                  </Text>
-                  
-                  <Text style={[styles.resultDescription, { color: theme.text }]}>
-                    {score >= colorblindTests.length / 2 
-                      ? t('process.visualTest.colorblind.passDescription') 
-                      : t('process.visualTest.colorblind.failDescription')}
-                  </Text>
+            <Text style={[styles.progressText, { color: theme.text }]}>
+              {testCompleted 
+                ? t('process.visualTest.completed') 
+                : `${currentTestIndex + 1}/${colorblindTests.length}`}
+            </Text>
+          </View>
+          
+          <ScrollView 
+            style={styles.scrollView} 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {!testCompleted ? (
+              <>
+                <Text style={[styles.description, { color: theme.text }]}>
+                  {t('process.visualTest.colorblind.instructions')}
+                </Text>
+                
+                <View style={[styles.imageContainer, { backgroundColor: theme.formInputBackground }]}>
+                  <Image
+                    source={currentTest.image}
+                    style={styles.testImage}
+                    resizeMode="contain"
+                  />
+                </View>
+                
+                <Text style={[styles.questionText, { color: theme.text }]}>
+                  {t('process.visualTest.colorblind.question')}
+                </Text>
+                
+                <View style={[styles.inputContainer, { backgroundColor: theme.formInputBackground }]}>
+                  <TextInput
+                    style={[styles.input, { color: theme.text }]}
+                    value={currentAnswer}
+                    onChangeText={setCurrentAnswer}
+                    placeholder={t('process.visualTest.colorblind.inputPlaceholder')}
+                    placeholderTextColor="#999"
+                    keyboardType="number-pad"
+                    maxLength={3}
+                    returnKeyType="done"
+                    onSubmitEditing={dismissKeyboard}
+                  />
+                </View>
+                
+                <View style={[styles.buttonRow, Platform.OS === 'ios' && keyboardVisible ? styles.keyboardVisibleButtons : {}]}>
+                  <TouchableOpacity 
+                    style={[styles.skipButton, { borderColor: theme.text }]}
+                    onPress={handleSkip}
+                  >
+                    <Text style={[styles.skipButtonText, { color: theme.text }]}>
+                      {t('process.visualTest.skip')}
+                    </Text>
+                  </TouchableOpacity>
                   
                   <TouchableOpacity 
-                    style={[styles.nextTestButton, { backgroundColor: theme.primary }]}
-                    onPress={handleNextTest}
+                    style={[styles.nextButton, { 
+                      backgroundColor: currentAnswer.trim() ? theme.primary : theme.formInputBackground,
+                      opacity: currentAnswer.trim() ? 1 : 0.7
+                    }]}
+                    onPress={handleNext}
+                    disabled={!currentAnswer.trim()}
                   >
-                    <Text style={styles.nextTestButtonText}>
-                      {t('process.visualTest.nextTest')}
+                    <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
+                      {currentTestIndex < colorblindTests.length - 1 
+                        ? t('process.visualTest.next') 
+                        : t('process.visualTest.finish')}
                     </Text>
                   </TouchableOpacity>
                 </View>
-              )}
-            </ScrollView>
-          </View>
-        </TouchableWithoutFeedback>
+              </>
+            ) : (
+              <View style={styles.resultsContainer}>
+                <View style={[styles.scoreCircle, {
+                  backgroundColor: score >= colorblindTests.length / 2 ? '#34C759' : '#FF3B30'
+                }]}>
+                  <Text style={styles.scoreText}>{score}/{colorblindTests.length}</Text>
+                </View>
+                
+                <Text style={[styles.resultTitle, { color: theme.text }]}>
+                  {score >= colorblindTests.length / 2 
+                    ? t('process.visualTest.colorblind.passTitle') 
+                    : t('process.visualTest.colorblind.failTitle')}
+                </Text>
+                
+                <Text style={[styles.resultDescription, { color: theme.text }]}>
+                  {score >= colorblindTests.length / 2 
+                    ? t('process.visualTest.colorblind.passDescription') 
+                    : t('process.visualTest.colorblind.failDescription')}
+                </Text>
+                
+                <TouchableOpacity 
+                  style={[styles.nextTestButton, { backgroundColor: theme.primary }]}
+                  onPress={handleNextTest}
+                >
+                  <Text style={styles.nextTestButtonText}>
+                    {t('process.visualTest.nextTest')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -329,7 +323,6 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -379,7 +372,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 24,
-    paddingBottom: 40,
     alignItems: 'center',
   },
   description: {
@@ -431,7 +423,6 @@ const styles = StyleSheet.create({
   },
   keyboardVisibleButtons: {
     marginTop: 16,
-    paddingBottom: 100,
   },
   skipButton: {
     paddingVertical: 14,

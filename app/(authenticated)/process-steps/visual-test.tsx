@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme, StatusBar, ScrollView } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
@@ -45,8 +45,8 @@ export default function VisualTest() {
   }, []);
   
   const handleGoBack = () => {
-    // Navigate to the home screen
-    router.push('/(authenticated)/home');
+    // Always navigate to the home screen
+    router.replace('/(authenticated)/home');
   };
   
   const handleStartTests = () => {
@@ -79,6 +79,27 @@ export default function VisualTest() {
   
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Stack.Screen
+        options={{
+          title: t('process.steps.visualTest'),
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: theme.background },
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleGoBack}>
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+          ),
+          headerShown: false,
+        }}
+        listeners={{
+          beforeRemove: (e) => {
+            e.preventDefault();
+            handleGoBack();
+          },
+        }}
+      />
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
       <View style={styles.header}>

@@ -76,7 +76,7 @@ export default function Home() {
     if (completedProcesses && completedProcesses.length > 0) {
       const process = completedProcesses[0];
       if (process.licenseInformation && process.licenseInformation.names) {
-        return `${process.licenseInformation.names} ${process.licenseInformation.lastNames}`;
+        return `${process.licenseInformation.names}`;
       }
     }
     
@@ -474,9 +474,12 @@ const styles = StyleSheet.create({
   licenseInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   infoItem: {
     flexDirection: 'column',
+    flex: 1,
+    alignItems: 'flex-start',
   },
   infoLabel: {
     color: 'rgba(255, 255, 255, 0.7)',

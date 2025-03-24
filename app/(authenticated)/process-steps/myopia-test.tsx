@@ -241,155 +241,149 @@ export default function MyopiaTest() {
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
       >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.innerContainer}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color={theme.text} />
-              </TouchableOpacity>
-              <Text style={[styles.title, { color: theme.text }]}>
-                {testCompleted 
-                  ? t('process.visualTest.myopia.results') 
-                  : t('process.visualTest.myopia.title')}
-              </Text>
-              <View style={styles.placeholder} />
+        <View style={styles.innerContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {testCompleted 
+                ? t('process.visualTest.myopia.results') 
+                : t('process.visualTest.myopia.title')}
+            </Text>
+            <View style={styles.placeholder} />
+          </View>
+          
+          <View style={styles.progressContainer}>
+            <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
+              <View 
+                style={[
+                  styles.progressFill, 
+                  { 
+                    width: `${testCompleted ? 100 : (currentTestIndex / myopiaTests.length) * 100}%`,
+                    backgroundColor: theme.primary 
+                  }
+                ]} 
+              />
             </View>
-            
-            <View style={styles.progressContainer}>
-              <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
-                <View 
-                  style={[
-                    styles.progressFill, 
-                    { 
-                      width: `${testCompleted ? 100 : (currentTestIndex / myopiaTests.length) * 100}%`,
-                      backgroundColor: theme.primary 
-                    }
-                  ]} 
-                />
-              </View>
-              <Text style={[styles.progressText, { color: theme.text }]}>
-                {testCompleted 
-                  ? t('process.visualTest.completed') 
-                  : `${currentTestIndex + 1}/${myopiaTests.length}`}
-              </Text>
-            </View>
-            
-            <ScrollView 
-              style={styles.scrollView} 
-              contentContainerStyle={[
-                styles.scrollContent,
-                keyboardVisible && Platform.OS === 'ios' ? { paddingBottom: 200 } : {}
-              ]}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-            >
-              {!testCompleted ? (
-                <>
-                  <Text style={[styles.description, { color: theme.text }]}>
-                    {t('process.visualTest.myopia.instructions')}
+            <Text style={[styles.progressText, { color: theme.text }]}>
+              {testCompleted 
+                ? t('process.visualTest.completed') 
+                : `${currentTestIndex + 1}/${myopiaTests.length}`}
+            </Text>
+          </View>
+          
+          <ScrollView 
+            style={styles.scrollView} 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {!testCompleted ? (
+              <>
+                <Text style={[styles.description, { color: theme.text }]}>
+                  {t('process.visualTest.myopia.instructions')}
+                </Text>
+                
+                <View style={[styles.letterContainer, { backgroundColor: theme.formInputBackground }]}>
+                  <Text 
+                    style={[
+                      styles.letterText, 
+                      { 
+                        color: theme.text,
+                        fontSize: currentTest.fontSize
+                      }
+                    ]}
+                  >
+                    {currentTest.letter}
                   </Text>
-                  
-                  <View style={styles.letterContainer}>
-                    <Text 
-                      style={[
-                        styles.letterText, 
-                        { 
-                          color: theme.text,
-                          fontSize: currentTest.fontSize
-                        }
-                      ]}
-                    >
-                      {currentTest.letter}
+                </View>
+                
+                <View style={styles.inputContainer}>
+                  <Text style={[styles.inputLabel, { color: theme.text }]}>
+                    {t('process.visualTest.myopia.whatLetterQuestion')}
+                  </Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      { 
+                        backgroundColor: theme.formInputBackground,
+                        color: theme.text,
+                        borderColor: theme.formInputBorder
+                      }
+                    ]}
+                    value={currentAnswer}
+                    onChangeText={handleAnswerChange}
+                    placeholder={t('process.visualTest.myopia.enterLetterPlaceholder')}
+                    placeholderTextColor="gray"
+                    autoCapitalize="characters"
+                    maxLength={1}
+                    returnKeyType="done"
+                    onSubmitEditing={dismissKeyboard}
+                  />
+                </View>
+                
+                <View style={[styles.buttonRow, Platform.OS === 'ios' && keyboardVisible ? styles.keyboardVisibleButtons : {}]}>
+                  <TouchableOpacity 
+                    style={[styles.skipButton, { borderColor: theme.text }]}
+                    onPress={handleSkip}
+                  >
+                    <Text style={[styles.skipButtonText, { color: theme.text }]}>
+                      {t('process.visualTest.skip')}
                     </Text>
-                  </View>
-                  
-                  <View style={styles.inputContainer}>
-                    <Text style={[styles.inputLabel, { color: theme.text }]}>
-                      {t('process.visualTest.myopia.whatLetterQuestion')}
-                    </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        { 
-                          backgroundColor: theme.formInputBackground,
-                          color: theme.text,
-                          borderColor: theme.formInputBorder
-                        }
-                      ]}
-                      value={currentAnswer}
-                      onChangeText={handleAnswerChange}
-                      placeholder={t('process.visualTest.myopia.enterLetterPlaceholder')}
-                      placeholderTextColor="gray"
-                      autoCapitalize="characters"
-                      maxLength={1}
-                      returnKeyType="done"
-                      onSubmitEditing={dismissKeyboard}
-                    />
-                  </View>
-                  
-                  <View style={[styles.buttonRow, Platform.OS === 'ios' && keyboardVisible ? styles.keyboardVisibleButtons : {}]}>
-                    <TouchableOpacity 
-                      style={[styles.skipButton, { borderColor: theme.text }]}
-                      onPress={handleSkip}
-                    >
-                      <Text style={[styles.skipButtonText, { color: theme.text }]}>
-                        {t('process.visualTest.skip')}
-                      </Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity 
-                      style={[styles.nextButton, { 
-                        backgroundColor: currentAnswer.trim() !== '' ? theme.primary : theme.formInputBackground,
-                        opacity: currentAnswer.trim() !== '' ? 1 : 0.7
-                      }]}
-                      onPress={handleSubmit}
-                      disabled={currentAnswer.trim() === ''}
-                    >
-                      <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
-                        {currentTestIndex < myopiaTests.length - 1 
-                          ? t('process.visualTest.next') 
-                          : t('process.visualTest.finish')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : (
-                <View style={styles.resultsContainer}>
-                  <View style={[styles.scoreCircle, {
-                    backgroundColor: correctAnswers >= PASSING_THRESHOLD ? '#34C759' : '#FF3B30'
-                  }]}>
-                    <Text style={styles.scoreText}>{correctAnswers}/{myopiaTests.length}</Text>
-                  </View>
-                  
-                  <Text style={[styles.resultTitle, { color: theme.text }]}>
-                    {correctAnswers >= PASSING_THRESHOLD
-                      ? t('process.visualTest.myopia.passTitle') 
-                      : t('process.visualTest.myopia.failTitle')}
-                  </Text>
-                  
-                  <Text style={[styles.resultDescription, { color: theme.text }]}>
-                    {correctAnswers >= PASSING_THRESHOLD
-                      ? t('process.visualTest.myopia.passDescription') 
-                      : t('process.visualTest.myopia.failDescription')}
-                  </Text>
+                  </TouchableOpacity>
                   
                   <TouchableOpacity 
-                    style={[styles.finishButton, { backgroundColor: theme.primary }]}
-                    onPress={handleFinish}
+                    style={[styles.nextButton, { 
+                      backgroundColor: currentAnswer.trim() !== '' ? theme.primary : theme.formInputBackground,
+                      opacity: currentAnswer.trim() !== '' ? 1 : 0.7
+                    }]}
+                    onPress={handleSubmit}
+                    disabled={currentAnswer.trim() === ''}
                   >
-                    <Text style={styles.finishButtonText}>
-                      {t('process.visualTest.finish')}
+                    <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
+                      {currentTestIndex < myopiaTests.length - 1 
+                        ? t('process.visualTest.next') 
+                        : t('process.visualTest.finish')}
                     </Text>
                   </TouchableOpacity>
                 </View>
-              )}
-            </ScrollView>
-          </View>
-        </TouchableWithoutFeedback>
+              </>
+            ) : (
+              <View style={styles.resultsContainer}>
+                <View style={[styles.scoreCircle, {
+                  backgroundColor: correctAnswers >= PASSING_THRESHOLD ? '#34C759' : '#FF3B30'
+                }]}>
+                  <Text style={styles.scoreText}>{correctAnswers}/{myopiaTests.length}</Text>
+                </View>
+                
+                <Text style={[styles.resultTitle, { color: theme.text }]}>
+                  {correctAnswers >= PASSING_THRESHOLD
+                    ? t('process.visualTest.myopia.passTitle') 
+                    : t('process.visualTest.myopia.failTitle')}
+                </Text>
+                
+                <Text style={[styles.resultDescription, { color: theme.text }]}>
+                  {correctAnswers >= PASSING_THRESHOLD
+                    ? t('process.visualTest.myopia.passDescription') 
+                    : t('process.visualTest.myopia.failDescription')}
+                </Text>
+                
+                <TouchableOpacity 
+                  style={[styles.finishButton, { backgroundColor: theme.primary }]}
+                  onPress={handleFinish}
+                >
+                  <Text style={styles.finishButtonText}>
+                    {t('process.visualTest.finish')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -450,7 +444,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 24,
-    paddingBottom: 40,
     alignItems: 'center',
   },
   description: {
@@ -503,7 +496,6 @@ const styles = StyleSheet.create({
   },
   keyboardVisibleButtons: {
     marginTop: 16,
-    paddingBottom: 100,
   },
   skipButton: {
     paddingVertical: 14,
