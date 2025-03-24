@@ -7,22 +7,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-type ProcessType = 'renewal' | 'replacement' | null;
+type ProcessType = 'renewal' | 'replacement';
 
 export default function ProcessType() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
-  const [selectedProcess, setSelectedProcess] = useState<ProcessType>(null);
+  const [selectedProcesses, setSelectedProcesses] = useState<ProcessType[]>([]);
+
+  const handleProcessSelection = (process: ProcessType) => {
+    setSelectedProcesses(prev => {
+      if (prev.includes(process)) {
+        return prev.filter(p => p !== process);
+      } else {
+        return [...prev, process];
+      }
+    });
+  };
 
   const handleSubmit = () => {
-    if (selectedProcess) {
-      router.push('/(authenticated)/process-review/license-information' as any);
+    if (selectedProcesses.length > 0) {
+      router.push('/(authenticated)/process-review/process-resume' as any);
     }
   };
 
   const isFormValid = () => {
-    return selectedProcess !== null;
+    return selectedProcesses.length > 0;
   };
 
   return (
@@ -60,11 +70,11 @@ export default function ProcessType() {
                   styles.optionCard,
                   { 
                     backgroundColor: theme.formInputBackground,
-                    borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
-                    borderWidth: selectedProcess === 'renewal' ? 2 : 1,
+                    borderColor: selectedProcesses.includes('renewal') ? theme.primary : theme.formInputBorder,
+                    borderWidth: selectedProcesses.includes('renewal') ? 2 : 1,
                   }
                 ]}
-                onPress={() => setSelectedProcess('renewal')}
+                onPress={() => handleProcessSelection('renewal')}
               >
                 <View style={[
                   styles.iconContainer, 
@@ -85,12 +95,16 @@ export default function ProcessType() {
                   </Text>
                 </View>
                 <View style={[
-                  styles.radioButton, 
+                  styles.checkBox, 
                   { 
-                    borderColor: selectedProcess === 'renewal' ? theme.primary : theme.formInputBorder,
-                    backgroundColor: selectedProcess === 'renewal' ? theme.primary : 'transparent',
+                    borderColor: selectedProcesses.includes('renewal') ? theme.primary : theme.formInputBorder,
+                    backgroundColor: selectedProcesses.includes('renewal') ? theme.primary : 'transparent',
                   }
-                ]} />
+                ]}>
+                  {selectedProcesses.includes('renewal') && (
+                    <Ionicons name="checkmark" size={18} color="#FFFFFF" />
+                  )}
+                </View>
               </Pressable>
 
               <Pressable
@@ -98,11 +112,11 @@ export default function ProcessType() {
                   styles.optionCard,
                   { 
                     backgroundColor: theme.formInputBackground,
-                    borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
-                    borderWidth: selectedProcess === 'replacement' ? 2 : 1,
+                    borderColor: selectedProcesses.includes('replacement') ? theme.primary : theme.formInputBorder,
+                    borderWidth: selectedProcesses.includes('replacement') ? 2 : 1,
                   }
                 ]}
-                onPress={() => setSelectedProcess('replacement')}
+                onPress={() => handleProcessSelection('replacement')}
               >
                 <View style={[
                   styles.iconContainer, 
@@ -123,12 +137,16 @@ export default function ProcessType() {
                   </Text>
                 </View>
                 <View style={[
-                  styles.radioButton, 
+                  styles.checkBox, 
                   { 
-                    borderColor: selectedProcess === 'replacement' ? theme.primary : theme.formInputBorder,
-                    backgroundColor: selectedProcess === 'replacement' ? theme.primary : 'transparent',
+                    borderColor: selectedProcesses.includes('replacement') ? theme.primary : theme.formInputBorder,
+                    backgroundColor: selectedProcesses.includes('replacement') ? theme.primary : 'transparent',
                   }
-                ]} />
+                ]}>
+                  {selectedProcesses.includes('replacement') && (
+                    <Ionicons name="checkmark" size={18} color="#FFFFFF" />
+                  )}
+                </View>
               </Pressable>
             </View>
           </View>
@@ -173,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
@@ -212,11 +230,13 @@ const styles = StyleSheet.create({
   optionDescription: {
     fontSize: 14,
   },
-  radioButton: {
+  checkBox: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 6,
     borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     padding: 20,

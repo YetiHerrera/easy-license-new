@@ -217,5 +217,23 @@ export default {
     renewalDescription: 'Renueva tu licencia, recuerda que vas a necesitar todos los documentos necesarios',
     replacement: 'Reposición',
     replacementDescription: 'Reposición la licencia que perdiste, recuerda que vas a necesitar todos los documentos requeridos'
+  },
+  processResume: {
+    title: 'Resumen de tu trámite',
+    subtitle: 'Acá podrás ver el resumen para el pago de tu trámite por favor asegurate de que todos los datos sean correctos',
+    processSummaryTitle: 'Resumen de trámite',
+    renewalAndReplacement: 'Renovación y Reposición de licencia',
+    address: 'Dirección',
+    postalCode: 'Codigo Postal',
+    phoneNumber: 'Número celular',
+    name: 'Nombre',
+    licenseType: 'Licencia Tipo',
+    paymentSummaryTitle: 'Resumen de pago',
+    paymentDescription: 'Detalle de todo el proceso de pagos que tendrás a continuación',
+    visualTest: 'Exámen de la vista',
+    expiredLicense: 'Multa por licencia vencida',
+    delivery: 'Envio a domicilio',
+    total: 'Total',
+    confirmAndPay: 'Confirmar y proceder al pago'
   }
 }; 

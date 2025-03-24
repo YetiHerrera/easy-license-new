@@ -215,5 +215,23 @@ export default {
     renewalDescription: 'Renew your license, remember you will need all necessary documents',
     replacement: 'Replacement',
     replacementDescription: 'Replace the license you lost, remember you will need all required documents'
+  },
+  processResume: {
+    title: 'Process Summary',
+    subtitle: 'Here you can see the summary for your payment, please verify that all information is correct',
+    processSummaryTitle: 'Process Summary',
+    renewalAndReplacement: 'Renewal and Replacement of license',
+    address: 'Address',
+    postalCode: 'Postal Code',
+    phoneNumber: 'Phone Number',
+    name: 'Name',
+    licenseType: 'License Type',
+    paymentSummaryTitle: 'Payment Summary',
+    paymentDescription: 'Details of all payment charges you will have next',
+    visualTest: 'Vision Test',
+    expiredLicense: 'Expired License Fee',
+    delivery: 'Home Delivery',
+    total: 'Total',
+    confirmAndPay: 'Confirm and Proceed to Payment'
   }
 }; 
