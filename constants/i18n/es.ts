@@ -207,5 +207,13 @@ export default {
     zipCodePlaceholder: 'Ingrese su código postal',
     zipCodeRequired: 'El código postal es requerido',
     invalidZipCode: 'Por favor ingrese un código postal válido de Estados Unidos (5 dígitos o formato 5+4)'
+  },
+  processType: {
+    title: 'Elije tu tipo de trámite',
+    subtitle: 'Ahora selecciona tu proceso, puedes tramitar tu renovación de licencia o bien la reposición de la misma, también puedes hacer ambos trámites al mismo tiempo',
+    renewal: 'Renovación',
+    renewalDescription: 'Renueva tu licencia, recuerda que vas a necesitar todos los documentos necesarios',
+    replacement: 'Reposición',
+    replacementDescription: 'Reposición la licencia que perdiste, recuerda que vas a necesitar todos los documentos requeridos'
   }
 }; 

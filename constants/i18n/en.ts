@@ -205,5 +205,13 @@ export default {
     zipCodePlaceholder: 'Enter your ZIP code',
     zipCodeRequired: 'ZIP code is required',
     invalidZipCode: 'Please enter a valid US ZIP code (5 digits or 5+4 format)'
+  },
+  processType: {
+    title: 'Choose Your Process Type',
+    subtitle: 'Now select your process, you can process your license renewal or replacement, you can also do both processes at the same time',
+    renewal: 'Renewal',
+    renewalDescription: 'Renew your license, remember you will need all necessary documents',
+    replacement: 'Replacement',
+    replacementDescription: 'Replace the license you lost, remember you will need all required documents'
   }
 }; 

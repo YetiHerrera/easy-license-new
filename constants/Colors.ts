@@ -11,6 +11,7 @@ const secondary = '#FB8D1A';
 const danger = '#E8083E';
 const success = '#02864A';
 const neutral = '#1C1A27';
+const darkBackground = '#121212';
 
 export const Colors = {
   light: {
@@ -33,7 +34,7 @@ export const Colors = {
   },
   dark: {
     text: '#ECEDEE',
-    background: neutral,
+    background: darkBackground,
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',

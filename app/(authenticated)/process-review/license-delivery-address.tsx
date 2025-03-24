@@ -75,7 +75,7 @@ export default function LicenseDeliveryAddress() {
         zipCode,
       });
       // Navigate to next step
-      router.push('/(authenticated)/process-review/payment' as any);
+      router.push('/(authenticated)/process-review/process-type' as any);
     }
   };
 
