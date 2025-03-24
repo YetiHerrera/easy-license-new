@@ -147,13 +147,20 @@ export default {
   },
   livenessVerification: {
     title: 'Identity Verification',
-    subtitle: 'To confirm your identity, we need to perform a live video verification. Follow the instructions below.',
+    subtitle: 'We need to perform a live video verification. Follow the instructions below.',
     instruction1: 'Make sure you are in a well-lit place.',
     instruction2: 'Keep your face within the frame throughout the process.',
     instruction3: 'Follow the movement instructions that will appear on screen.',
+    instruction4: 'Make sure you have your identity document visible beside your face during the recording.',
     startVerification: 'Start verification',
     verificationComplete: 'Verification complete',
     verificationFailed: 'Verification failed',
-    tryAgain: 'Try again'
+    tryAgain: 'Try again',
+    showDocument: 'Please have your identification document visible beside your face during the recording.',
+    moveHeadSideToSide: 'Slowly turn your head from side to side during the recording for proper verification.',
+    startRecording: 'Start recording',
+    finishRecording: 'Finish recording',
+    verifyRecording: 'Submit verification',
+    verificationSuccessMessage: 'Your identity verification has been sent successfully and will be reviewed by our agents.'
   }
 }; 

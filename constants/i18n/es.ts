@@ -147,13 +147,20 @@ export default {
   },
   livenessVerification: {
     title: 'Verificación de Identidad',
-    subtitle: 'Para confirmar tu identidad, necesitamos realizar una verificación de video en vivo. Sigue las instrucciones a continuación.',
+    subtitle: 'Necesitamos realizar una verificación en vivo. Sigue las instrucciones a continuación.',
     instruction1: 'Asegúrate de estar en un lugar bien iluminado.',
     instruction2: 'Mantén tu rostro dentro del marco durante todo el proceso.',
     instruction3: 'Sigue las instrucciones de movimiento que aparecerán en pantalla.',
+    instruction4: 'Asegúrate de tener tu documento de identidad visible junto a tu rostro durante la grabación.',
     startVerification: 'Iniciar verificación',
     verificationComplete: 'Verificación completada',
     verificationFailed: 'Verificación fallida',
-    tryAgain: 'Intentar de nuevo'
+    tryAgain: 'Intentar de nuevo',
+    showDocument: 'Por favor, ten tu documento de identidad visible junto a tu rostro durante la grabación.',
+    moveHeadSideToSide: 'Gira lentamente tu cabeza de lado a lado durante la grabación para una verificación adecuada.',
+    startRecording: 'Iniciar grabación',
+    finishRecording: 'Finalizar grabación',
+    verifyRecording: 'Enviar verificación',
+    verificationSuccessMessage: 'Tu identidad prueba de verificación fue enviada con éxito y sera revisada por nuestros agentes.'
   }
 }; 

@@ -31,23 +31,30 @@ export default function LivenessVerification() {
         
         <View style={styles.infoContainer}>
           <View style={[styles.infoItem, { backgroundColor: theme.formInputBackground }]}>
-            <FontAwesome name="info-circle" size={24} color={theme.primary} style={styles.infoIcon} />
+            <FontAwesome name="info-circle" size={24} color={theme.success} style={styles.infoIcon} />
             <Text variant="body" style={[styles.infoText, { color: theme.text }]}>
               {t('livenessVerification.instruction1')}
             </Text>
           </View>
           
           <View style={[styles.infoItem, { backgroundColor: theme.formInputBackground }]}>
-            <FontAwesome name="info-circle" size={24} color={theme.primary} style={styles.infoIcon} />
+            <FontAwesome name="info-circle" size={24} color={theme.success} style={styles.infoIcon} />
             <Text variant="body" style={[styles.infoText, { color: theme.text }]}>
               {t('livenessVerification.instruction2')}
             </Text>
           </View>
           
           <View style={[styles.infoItem, { backgroundColor: theme.formInputBackground }]}>
-            <FontAwesome name="info-circle" size={24} color={theme.primary} style={styles.infoIcon} />
+            <FontAwesome name="info-circle" size={24} color={theme.success} style={styles.infoIcon} />
             <Text variant="body" style={[styles.infoText, { color: theme.text }]}>
               {t('livenessVerification.instruction3')}
+            </Text>
+          </View>
+
+          <View style={[styles.infoItem, { backgroundColor: theme.formInputBackground }]}>
+            <FontAwesome name="info-circle" size={24} color={theme.success} style={styles.infoIcon} />
+            <Text variant="body" style={[styles.infoText, { color: theme.text }]}>
+              {t('livenessVerification.instruction4')}
             </Text>
           </View>
         </View>
@@ -59,7 +66,7 @@ export default function LivenessVerification() {
       }]}>
         <Pressable
           style={[styles.button, { backgroundColor: theme.primary }]}
-          onPress={() => router.push('/(authenticated)/home' as any)}
+          onPress={() => router.push('/(authenticated)/liveness-verification/liveness-process' as any)}
         >
           <Text variant="button" style={styles.buttonText}>
             {t('livenessVerification.startVerification')}
