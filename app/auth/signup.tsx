@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { sendVerificationCode } = useAuth();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -20,6 +20,7 @@ export default function SignupScreen() {
   const [countryCode, setCountryCode] = useState('+502'); // Default to Guatemala
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -45,15 +46,14 @@ export default function SignupScreen() {
   const handleSignup = async () => {
     if (validate()) {
       try {
-        // First perform the sign in action
-        await signIn('dummy-token');
-        
-        // Then navigate to home after successful sign in
-        router.replace('/(authenticated)/home');
+        setIsLoading(true);
+        await sendVerificationCode(email, `${countryCode}${phoneNumber}`);
+        router.push('/auth/verify-code');
       } catch (error) {
-        console.error('Error signing in:', error);
-        // If sign in fails, we should handle the error appropriately
-        // For now, we'll just log it
+        console.error('Error during signup:', error);
+        setErrors({ submit: t('auth.signupFailed') });
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -100,15 +100,28 @@ export default function SignupScreen() {
             error={errors.password}
           />
           
+          {errors.submit && (
+            <Text style={[styles.errorText, { color: theme.danger }]}>{errors.submit}</Text>
+          )}
+          
           <TouchableOpacity 
-            style={[styles.signupButton, { backgroundColor: theme.primary }]} 
+            style={[
+              styles.signupButton, 
+              { backgroundColor: theme.primary },
+              isLoading && styles.disabledButton
+            ]} 
             onPress={handleSignup}
+            disabled={isLoading}
           >
-            <Text style={styles.signupButtonText}>{t('auth.createAccount')}</Text>
+            <Text style={styles.signupButtonText}>
+              {isLoading ? t('auth.sending') : t('auth.createAccount')}
+            </Text>
           </TouchableOpacity>
           
           <TouchableOpacity onPress={goToLogin}>
-            <Text style={[styles.loginText, { color: theme.text, textDecorationLine: 'underline' }]}>{t('auth.haveAccount')}</Text>
+            <Text style={[styles.loginText, { color: theme.text, textDecorationLine: 'underline' }]}>
+              {t('auth.haveAccount')}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -147,6 +160,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
+  disabledButton: {
+    opacity: 0.7,
+  },
   signupButtonText: {
     color: '#fff',
     fontSize: 16,
@@ -156,6 +172,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     marginBottom: 20,
+  },
+  errorText: {
+    textAlign: 'center',
+    marginBottom: 10,
   },
   orContainer: {
     flexDirection: 'row',

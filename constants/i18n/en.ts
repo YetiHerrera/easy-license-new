@@ -36,7 +36,16 @@ export default {
     passwordRequired: "Password is required",
     phoneRequired: "Phone number is required",
     invalidEmail: "Please enter a valid email",
-    invalidPhone: "Please enter a valid phone number"
+    invalidPhone: "Please enter a valid phone number",
+    verifyCode: "Verify Code",
+    verifyCodeSubtitle: "Enter the 6-digit code sent to your email",
+    verify: "Verify",
+    didntReceiveCode: "Didn't receive the code?",
+    resendCode: "Resend Code",
+    invalidCode: "Please enter a valid 6-digit code",
+    verificationFailed: "Verification failed. Please try again.",
+    signupFailed: "Signup failed. Please try again.",
+    sending: "Sending..."
   },
   common: {
     loading: 'Loading...',

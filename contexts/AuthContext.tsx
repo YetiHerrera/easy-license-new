@@ -5,6 +5,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
+  verifyCode: (code: string) => Promise<void>;
+  sendVerificationCode: (email: string, phoneNumber: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,8 +46,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const sendVerificationCode = async (email: string, phoneNumber: string) => {
+    try {
+      // TODO: Implement API call to send verification code
+      // This should be replaced with your actual API call
+      console.log('Sending verification code to:', email, phoneNumber);
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+      throw error;
+    }
+  };
+
+  const verifyCode = async (code: string) => {
+    try {
+      // TODO: Implement API call to verify code
+      // This should be replaced with your actual API call
+      console.log('Verifying code:', code);
+      // For now, we'll just simulate a successful verification
+      await signIn('dummy-token');
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider 
+      value={{ 
+        isAuthenticated, 
+        signIn, 
+        signOut, 
+        verifyCode,
+        sendVerificationCode 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

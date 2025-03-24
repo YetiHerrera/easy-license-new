@@ -36,7 +36,16 @@ export default {
     passwordRequired: "La contraseña es requerida",
     phoneRequired: "El número de teléfono es requerido",
     invalidEmail: "Por favor ingrese un correo electrónico válido",
-    invalidPhone: "Por favor ingrese un número de teléfono válido"
+    invalidPhone: "Por favor ingrese un número de teléfono válido",
+    verifyCode: "Verificar Código",
+    verifyCodeSubtitle: "Ingrese el código de 6 dígitos enviado a su correo electrónico",
+    verify: "Verificar",
+    didntReceiveCode: "¿No recibió el código?",
+    resendCode: "Reenviar Código",
+    invalidCode: "Por favor ingrese un código válido de 6 dígitos",
+    verificationFailed: "La verificación falló. Por favor intente de nuevo.",
+    signupFailed: "El registro falló. Por favor intente de nuevo.",
+    sending: "Enviando..."
   },
   common: {
     loading: 'Cargando...',
