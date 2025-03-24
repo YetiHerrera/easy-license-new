@@ -6,9 +6,11 @@ import { Colors } from '../../constants/Colors';
 import { t } from '../../constants/i18n';
 import FormInput from '../../components/auth/FormInput';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -33,10 +35,19 @@ export default function LoginScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (validate()) {
-      // TODO: Implement actual login logic
-      console.log('Login with:', { email, password });
+      try {
+        // First perform the sign in action
+        await signIn('dummy-token');
+        
+        // Then navigate to home after successful sign in
+        router.replace('/(authenticated)/home');
+      } catch (error) {
+        console.error('Error signing in:', error);
+        // If sign in fails, we should handle the error appropriately
+        // For now, we'll just log it
+      }
     }
   };
 

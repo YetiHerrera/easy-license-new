@@ -47,5 +47,13 @@ export default {
     delete: 'Eliminar',
     edit: 'Editar',
     back: 'Atrás'
+  },
+  home: {
+    emptyState: {
+      title: 'Sin Proceso Activo',
+      description: 'Actualmente no tienes ningún proceso de licencia activo. Inicia uno nuevo para comenzar tu proceso de renovación.',
+      startButton: 'Iniciar Nuevo Proceso'
+    },
+    withProcess: 'Proceso Activo'
   }
 }; 

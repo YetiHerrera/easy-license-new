@@ -47,5 +47,13 @@ export default {
     delete: 'Delete',
     edit: 'Edit',
     back: 'Back'
+  },
+  home: {
+    emptyState: {
+      title: 'No Active Process',
+      description: 'You currently don\'t have any active license process. Start a new one to begin your license renewal journey.',
+      startButton: 'Start New Process'
+    },
+    withProcess: 'Active Process'
   }
 }; 
