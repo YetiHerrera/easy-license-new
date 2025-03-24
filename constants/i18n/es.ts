@@ -118,7 +118,7 @@ export default {
         title: 'Prueba de Percepción de Profundidad',
         description: 'Identifica qué objetos aparecen más cerca o más lejos en una serie de imágenes para evaluar tus habilidades de percepción de profundidad.',
         instructions: 'Mira las imágenes a continuación y toca la que te parezca más cercana a ti.',
-        question: '¿Qué imagen te parece más cercana?',
+        question: 'Selecciona la letra que te parece más cercana:',
         results: 'Resultados de la Prueba de Percepción de Profundidad',
         passTitle: '¡Buena percepción de profundidad!',
         passDescription: 'Has pasado la prueba de percepción de profundidad. Tu capacidad para percibir la profundidad parece ser normal.',
@@ -127,11 +127,26 @@ export default {
         tip: "Intenta sostener tu teléfono a la distancia del brazo extendido y enfócate en el centro de cada imagen. Una imagen debería \"sobresalir\" o parecer más cercana que la otra.",
         cueText: "Ejemplo de indicación visual:",
         closerLabel: "Más cerca",
-        furtherLabel: "Más lejos"
+        furtherLabel: "Más lejos",
+        questions: {
+          letters: 'Selecciona la letra que te parece más cercana:',
+          numbers: '¿Qué número parece flotar sobre la pantalla?',
+          symbols: 'Selecciona el símbolo que te parece más cercano:'
+        }
       },
       myopia: {
         title: 'Prueba de Miopía',
-        description: 'Lee letras de tamaño decreciente para determinar tu agudeza visual y verificar si tienes miopía.'
+        description: 'Lee letras de tamaño decreciente para determinar tu agudeza visual y verificar si tienes miopía.',
+        instructions: 'Lee la letra a continuación y escribe lo que ves. Si no puedes ver la letra, puedes omitirla y pasar a la siguiente.',
+        whatLetterQuestion: '¿Qué letra ves?',
+        enterLetterPlaceholder: 'Ingresa la letra',
+        emptyAnswer: 'No se proporcionó respuesta',
+        enterLetter: 'Por favor ingresa la letra que ves o omite si no puedes verla.',
+        results: 'Resultados de la Prueba de Miopía',
+        passTitle: '¡Buena agudeza visual!',
+        passDescription: 'Has pasado la prueba de miopía. Tu agudeza visual parece estar en el rango normal.',
+        failTitle: 'Problemas de agudeza visual detectados',
+        failDescription: 'Es posible que tengas dificultad para ver objetos a distancia. Esto es común y puede corregirse con gafas o lentes de contacto.'
       },
       startTests: 'Iniciar Pruebas',
       testsCompleted: 'Pruebas Completadas',

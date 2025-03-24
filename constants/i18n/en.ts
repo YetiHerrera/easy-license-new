@@ -118,7 +118,7 @@ export default {
         title: 'Depth Perception Test',
         description: 'Identify which objects appear closer or further away in a series of images to evaluate your depth perception abilities.',
         instructions: 'Look at the images below and tap on the one that appears to be closest to you.',
-        question: 'Which image appears closest to you?',
+        question: 'Select the letter that appears closest to you:',
         results: 'Depth Perception Test Results',
         passTitle: 'Good depth perception!',
         passDescription: 'You have passed the depth perception test. Your ability to perceive depth appears to be normal.',
@@ -127,11 +127,26 @@ export default {
         tip: "Try holding your phone at arm's length and focusing on the center of each image. One image should appear to \"pop out\" or seem closer than the other.",
         cueText: "Visual cue example:",
         closerLabel: "Closer",
-        furtherLabel: "Further"
+        furtherLabel: "Further",
+        questions: {
+          letters: 'Select the letter that appears closest to you:',
+          numbers: 'Which number seems to float above the screen?',
+          symbols: 'Select the symbol that appears closest to you:'
+        }
       },
       myopia: {
         title: 'Myopia Test',
-        description: 'Read letters of decreasing size to determine your visual acuity and check for nearsightedness.'
+        description: 'Read letters of decreasing size to determine your visual acuity and check for nearsightedness.',
+        instructions: 'Read the letter below and type what you see. If you cannot see the letter, you can skip to the next one.',
+        whatLetterQuestion: 'What letter do you see?',
+        enterLetterPlaceholder: 'Enter letter',
+        emptyAnswer: 'No answer provided',
+        enterLetter: 'Please enter the letter you see or skip if you cannot see it.',
+        results: 'Myopia Test Results',
+        passTitle: 'Good visual acuity!',
+        passDescription: 'You have passed the myopia test. Your visual acuity appears to be in the normal range.',
+        failTitle: 'Visual acuity issues detected',
+        failDescription: 'You may have difficulty seeing objects at a distance. This is common and can be corrected with glasses or contact lenses.'
       },
       startTests: 'Start Tests',
       testsCompleted: 'Tests Completed',

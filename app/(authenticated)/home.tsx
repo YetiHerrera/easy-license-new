@@ -12,7 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Home() {
   const { signOut } = useAuth();
-  const { hasActiveProcesses, completedProcesses, userProfile, updateProcessVerificationStep } = useData();
+  const { hasActiveProcesses, completedProcesses, userProfile, updateProcessVerificationStep, logout } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
 
@@ -21,6 +21,9 @@ export default function Home() {
   };
 
   const handleLogout = async () => {
+    // Erase all user data
+    await logout();
+    // Sign out from authentication
     await signOut();
     // The router navigation will be handled by AuthContext's state change
   };
@@ -104,14 +107,18 @@ export default function Home() {
 
   const WelcomeHeader = () => (
     <View style={styles.welcomeHeaderContainer}>
-      <View style={styles.welcomeTextContainer}>
-        <Text style={[styles.welcomeBackText, { color: theme.text, fontWeight: 'bold' }]}>
-          {t('home.welcomeBack')}
-        </Text>
-        <Text style={[styles.userName, { color: theme.text }]}>
-          {getUserName()}
-        </Text>
-      </View>
+      {hasActiveProcesses() ? (
+        <View style={styles.welcomeTextContainer}>
+          <Text style={[styles.welcomeBackText, { color: theme.text, fontWeight: 'bold' }]}>
+            {t('home.welcomeBack')}
+          </Text>
+          <Text style={[styles.userName, { color: theme.text }]}>
+            {getUserName()}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.welcomeTextContainer} />
+      )}
       
       <TouchableOpacity 
         style={[styles.logoutButton, { backgroundColor: theme.formInputBackground }]} 

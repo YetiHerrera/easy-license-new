@@ -5,6 +5,7 @@ import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
 
 export default function VisualTest() {
   const { id } = useLocalSearchParams();
@@ -12,11 +13,40 @@ export default function VisualTest() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
-  // Find the process by ID
-  const process = completedProcesses.find(p => p.id === id);
+  // Use local state for the process to ensure UI updates
+  const [currentProcess, setCurrentProcess] = useState(() => {
+    const process = completedProcesses.find(p => p.id === id);
+    console.log('Initial process in VisualTest:', process);
+    return process;
+  });
+  
+  // Update the current process when completedProcesses changes or id changes
+  useEffect(() => {
+    const process = completedProcesses.find(p => p.id === id);
+    console.log('Process found in useEffect:', process);
+    if (process) {
+      console.log('Is visual test completed?', process.visualTestCompleted);
+      setCurrentProcess(process);
+    }
+  }, [completedProcesses, id]);
+  
+  // Force a refresh when component mounts
+  useEffect(() => {
+    // Force refresh to get the latest data
+    const refreshTimer = setTimeout(() => {
+      const freshProcess = completedProcesses.find(p => p.id === id);
+      console.log('Refreshed process:', freshProcess);
+      if (freshProcess) {
+        setCurrentProcess(freshProcess);
+      }
+    }, 300);
+    
+    return () => clearTimeout(refreshTimer);
+  }, []);
   
   const handleGoBack = () => {
-    router.back();
+    // Navigate to the home screen
+    router.push('/(authenticated)/home');
   };
   
   const handleStartTests = () => {
@@ -27,14 +57,14 @@ export default function VisualTest() {
     });
   };
   
-  const handleCompleteTest = async () => {
-    if (process) {
-      await updateProcessVerificationStep(process.id, 'visualTest', true);
-      router.back();
-    }
-  };
+  // const handleCompleteTest = async () => {
+  //   if (currentProcess) {
+  //     await updateProcessVerificationStep(currentProcess.id, 'visualTest', true);
+  //     router.back();
+  //   }
+  // };
 
-  if (!process) {
+  if (!currentProcess) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
         <Text style={[styles.errorText, { color: theme.text }]}>{t('process.error.notFound')}</Text>
@@ -45,6 +75,8 @@ export default function VisualTest() {
     );
   }
 
+  console.log('Rendering VisualTest with visualTestCompleted:', currentProcess.visualTestCompleted);
+  
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
@@ -132,11 +164,11 @@ export default function VisualTest() {
             {t('process.referenceNumber')}:
           </Text>
           <Text style={[styles.referenceValue, { color: theme.text }]}>
-            {process.id}
+            {currentProcess.id}
           </Text>
         </View>
         
-        {process.visualTestCompleted && (
+        {!currentProcess.visualTestCompleted && (
           <TouchableOpacity 
             style={[styles.startButton, { backgroundColor: theme.primary }]}
             onPress={handleStartTests}
@@ -145,7 +177,7 @@ export default function VisualTest() {
           </TouchableOpacity>
         )}
         
-        {!process.visualTestCompleted && (
+        {currentProcess.visualTestCompleted && (
           <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
             <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
             <Text style={styles.completedText}>{t('process.visualTest.testsCompleted')}</Text>

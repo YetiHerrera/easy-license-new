@@ -4,13 +4,12 @@ import {
   Text, 
   StyleSheet, 
   TouchableOpacity, 
-  Image, 
   useColorScheme,
   StatusBar,
   SafeAreaView,
   ScrollView,
-  TextInput,
   Dimensions,
+  TextInput,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -26,35 +25,36 @@ import { Ionicons } from '@expo/vector-icons';
 // Get screen dimensions for responsive layout
 const { width, height } = Dimensions.get('window');
 
-// Colorblind test data with images and correct answers
-const colorblindTests = [
-  { id: 1, image: require('@/assets/images/visual-test/7.png'), correctAnswer: '7' },
-  { id: 2, image: require('@/assets/images/visual-test/9.png'), correctAnswer: '9' },
-  { id: 3, image: require('@/assets/images/visual-test/12.png'), correctAnswer: '12' },
-  { id: 4, image: require('@/assets/images/visual-test/74.png'), correctAnswer: '74' },
-].sort(() => Math.random() - 0.5);
+// Test data for myopia test
+// Each test contains a letter with decreasing font size
+const myopiaTests = [
+  { id: 1, letter: 'E', fontSize: 90 },
+  { id: 2, letter: 'F', fontSize: 70 },
+  { id: 3, letter: 'P', fontSize: 55 },
+  { id: 4, letter: 'T', fontSize: 40 },
+  { id: 5, letter: 'O', fontSize: 30 },
+  { id: 6, letter: 'Z', fontSize: 22 },
+  { id: 7, letter: 'D', fontSize: 16 },
+  { id: 8, letter: 'L', fontSize: 12 }
+];
 
-// Interface for the visual test progress
-interface VisualTestProgress {
-  completed: boolean;
-  score: number;
-  total: number;
-}
+// Number of correct answers needed to pass
+const PASSING_THRESHOLD = 6;
 
-export default function ColorblindTest() {
+export default function MyopiaTest() {
   const { id } = useLocalSearchParams();
   const { completedProcesses, updateProcessVerificationStep, saveTestResults } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<string[]>(Array(colorblindTests.length).fill(''));
+  const [userAnswers, setUserAnswers] = useState<string[]>(Array(myopiaTests.length).fill(''));
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [testCompleted, setTestCompleted] = useState(false);
-  const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   
-  const currentTest = colorblindTests[currentTestIndex];
+  const currentTest = myopiaTests[currentTestIndex];
   
   // Add keyboard listeners
   useEffect(() => {
@@ -74,69 +74,75 @@ export default function ColorblindTest() {
   }, []);
   
   const handleGoBack = () => {
-    if (currentTestIndex > 0) {
-      setCurrentTestIndex(currentTestIndex - 1);
-      setCurrentAnswer(userAnswers[currentTestIndex - 1]);
-    } else {
-      router.back();
-    }
+    router.back();
+  };
+  
+  const handleAnswerChange = (text: string) => {
+    // Convert to uppercase for easier comparison
+    setCurrentAnswer(text.toUpperCase());
   };
   
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
   
-  const handleNext = () => {
-    // Dismiss keyboard
-    dismissKeyboard();
+  const handleSubmit = async () => {
+    if (currentAnswer.trim() === '') {
+      Alert.alert(
+        t('process.visualTest.myopia.emptyAnswer'),
+        t('process.visualTest.myopia.enterLetter'),
+        [{ text: 'OK' }]
+      );
+      return;
+    }
     
     // Save current answer
     const newAnswers = [...userAnswers];
-    newAnswers[currentTestIndex] = currentAnswer;
+    newAnswers[currentTestIndex] = currentAnswer.trim();
     setUserAnswers(newAnswers);
     
-    if (currentTestIndex < colorblindTests.length - 1) {
+    // Check if answer is correct
+    const isCorrect = currentAnswer.trim().toUpperCase() === currentTest.letter;
+    
+    if (currentTestIndex < myopiaTests.length - 1) {
       // Move to next test
       setCurrentTestIndex(currentTestIndex + 1);
-      setCurrentAnswer(userAnswers[currentTestIndex + 1]);
+      setCurrentAnswer('');
     } else {
       // Calculate score
-      const correctAnswers = newAnswers.filter(
-        (answer, index) => answer === colorblindTests[index].correctAnswer
+      const totalCorrect = newAnswers.filter(
+        (answer, index) => answer.toUpperCase() === myopiaTests[index].letter
       ).length;
       
-      setScore(correctAnswers);
+      setCorrectAnswers(totalCorrect);
       setTestCompleted(true);
       
-      // Save progress to context
+      // Save progress and results to context
       if (id) {
-        // Mark visual test step as in progress
-        updateProcessVerificationStep(id.toString(), 'visualTest', true);
+        console.log('Before update in handleSubmit - Process:', completedProcesses.find(p => p.id === id));
+        
+        // Mark visual test as completed - sets visualTestCompleted to true in the process
+        const updatedProcess = await updateProcessVerificationStep(id.toString(), 'visualTest', true);
+        
+        console.log('After update in handleSubmit - Process:', updatedProcess);
+        
+        if (!updatedProcess?.visualTestCompleted) {
+          console.warn('Failed to update visualTestCompleted flag in handleSubmit');
+        }
         
         // Save test results
         const testResults = {
-          score: correctAnswers,
-          totalQuestions: colorblindTests.length,
-          passed: correctAnswers >= (colorblindTests.length / 2) // Pass if at least half are correct
+          score: totalCorrect,
+          totalQuestions: myopiaTests.length,
+          passed: totalCorrect >= PASSING_THRESHOLD
         };
         
-        saveTestResults(id.toString(), 'colorblind', testResults);
+        await saveTestResults(id.toString(), 'myopia', testResults);
       }
     }
   };
   
-  const handleNextTest = () => {
-    // Navigate to the next test (depth perception)
-    router.push({
-      pathname: '/(authenticated)/process-steps/depth-perception-test',
-      params: { id }
-    });
-  };
-  
   const handleSkip = () => {
-    // Dismiss keyboard
-    dismissKeyboard();
-    
     Alert.alert(
       t('process.visualTest.skipTitle'),
       t('process.visualTest.skipConfirmation'),
@@ -147,33 +153,87 @@ export default function ColorblindTest() {
         },
         {
           text: t('process.visualTest.skip'),
-          onPress: () => {
+          onPress: async () => {
             const newAnswers = [...userAnswers];
-            newAnswers[currentTestIndex] = '';
+            newAnswers[currentTestIndex] = ''; // Empty string indicates skipped
             setUserAnswers(newAnswers);
             
-            if (currentTestIndex < colorblindTests.length - 1) {
+            if (currentTestIndex < myopiaTests.length - 1) {
               setCurrentTestIndex(currentTestIndex + 1);
-              setCurrentAnswer(userAnswers[currentTestIndex + 1]);
+              setCurrentAnswer('');
             } else {
-              // Calculate score with skipped answers
-              const correctAnswers = newAnswers.filter(
-                (answer, index) => answer === colorblindTests[index].correctAnswer
+              // Calculate score
+              const totalCorrect = newAnswers.filter(
+                (answer, index) => answer.toUpperCase() === myopiaTests[index].letter
               ).length;
               
-              setScore(correctAnswers);
+              setCorrectAnswers(totalCorrect);
               setTestCompleted(true);
               
-              // Save progress to context
+              // Save progress and results to context
               if (id) {
-                // Using 'visualTest' as the verification step since that's what's defined in the context
-                updateProcessVerificationStep(id.toString(), 'visualTest', true);
+                console.log('Before update in handleSkip - Process:', completedProcesses.find(p => p.id === id));
+                
+                // Mark visual test as completed - sets visualTestCompleted to true in the process
+                const updatedProcess = await updateProcessVerificationStep(id.toString(), 'visualTest', true);
+                
+                console.log('After update in handleSkip - Process:', updatedProcess);
+                
+                if (!updatedProcess?.visualTestCompleted) {
+                  console.warn('Failed to update visualTestCompleted flag in handleSkip');
+                }
+                
+                // Save test results
+                const testResults = {
+                  score: totalCorrect,
+                  totalQuestions: myopiaTests.length,
+                  passed: totalCorrect >= PASSING_THRESHOLD
+                };
+                
+                await saveTestResults(id.toString(), 'myopia', testResults);
               }
             }
           },
         },
       ]
     );
+  };
+  
+  const handleFinish = async () => {
+    // Mark visual test as completed
+    if (id) {
+      console.log('Before update - Process:', completedProcesses.find(p => p.id === id));
+      
+      // Update the process verification step - this marks visualTestCompleted as true
+      const updatedProcess = await updateProcessVerificationStep(id.toString(), 'visualTest', true);
+      
+      // Check if the update was successful
+      console.log('After update - Process:', updatedProcess);
+      
+      if (!updatedProcess?.visualTestCompleted) {
+        console.warn('Failed to update visualTestCompleted flag');
+      }
+      
+      // Save test results
+      const testResults = {
+        score: correctAnswers,
+        totalQuestions: myopiaTests.length,
+        passed: correctAnswers >= PASSING_THRESHOLD
+      };
+      
+      await saveTestResults(id.toString(), 'myopia', testResults);
+      
+      // Give time for state to update before navigating
+      setTimeout(() => {
+        // Navigate back to the visual test screen
+        router.push({
+          pathname: '/(authenticated)/process-steps/visual-test',
+          params: { id }
+        });
+      }, 500);
+    } else {
+      router.push('/(authenticated)/home');
+    }
   };
 
   return (
@@ -193,8 +253,8 @@ export default function ColorblindTest() {
               </TouchableOpacity>
               <Text style={[styles.title, { color: theme.text }]}>
                 {testCompleted 
-                  ? t('process.visualTest.colorblind.results') 
-                  : t('process.visualTest.colorblind.title')}
+                  ? t('process.visualTest.myopia.results') 
+                  : t('process.visualTest.myopia.title')}
               </Text>
               <View style={styles.placeholder} />
             </View>
@@ -205,7 +265,7 @@ export default function ColorblindTest() {
                   style={[
                     styles.progressFill, 
                     { 
-                      width: `${testCompleted ? 100 : (currentTestIndex / colorblindTests.length) * 100}%`,
+                      width: `${testCompleted ? 100 : (currentTestIndex / myopiaTests.length) * 100}%`,
                       backgroundColor: theme.primary 
                     }
                   ]} 
@@ -214,7 +274,7 @@ export default function ColorblindTest() {
               <Text style={[styles.progressText, { color: theme.text }]}>
                 {testCompleted 
                   ? t('process.visualTest.completed') 
-                  : `${currentTestIndex + 1}/${colorblindTests.length}`}
+                  : `${currentTestIndex + 1}/${myopiaTests.length}`}
               </Text>
             </View>
             
@@ -222,7 +282,7 @@ export default function ColorblindTest() {
               style={styles.scrollView} 
               contentContainerStyle={[
                 styles.scrollContent,
-                keyboardVisible && Platform.OS === 'ios' ? { paddingBottom: 20 } : {}
+                keyboardVisible && Platform.OS === 'ios' ? { paddingBottom: 200 } : {}
               ]}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
@@ -230,30 +290,42 @@ export default function ColorblindTest() {
               {!testCompleted ? (
                 <>
                   <Text style={[styles.description, { color: theme.text }]}>
-                    {t('process.visualTest.colorblind.instructions')}
+                    {t('process.visualTest.myopia.instructions')}
                   </Text>
                   
-                  <View style={[styles.imageContainer, { backgroundColor: theme.formInputBackground }]}>
-                    <Image
-                      source={currentTest.image}
-                      style={styles.testImage}
-                      resizeMode="contain"
-                    />
+                  <View style={styles.letterContainer}>
+                    <Text 
+                      style={[
+                        styles.letterText, 
+                        { 
+                          color: theme.text,
+                          fontSize: currentTest.fontSize
+                        }
+                      ]}
+                    >
+                      {currentTest.letter}
+                    </Text>
                   </View>
                   
-                  <Text style={[styles.questionText, { color: theme.text }]}>
-                    {t('process.visualTest.colorblind.question')}
-                  </Text>
-                  
-                  <View style={[styles.inputContainer, { backgroundColor: theme.formInputBackground }]}>
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.inputLabel, { color: theme.text }]}>
+                      {t('process.visualTest.myopia.whatLetterQuestion')}
+                    </Text>
                     <TextInput
-                      style={[styles.input, { color: theme.text }]}
+                      style={[
+                        styles.input,
+                        { 
+                          backgroundColor: theme.formInputBackground,
+                          color: theme.text,
+                          borderColor: theme.formInputBorder
+                        }
+                      ]}
                       value={currentAnswer}
-                      onChangeText={setCurrentAnswer}
-                      placeholder={t('process.visualTest.colorblind.inputPlaceholder')}
-                      placeholderTextColor="#999"
-                      keyboardType="number-pad"
-                      maxLength={3}
+                      onChangeText={handleAnswerChange}
+                      placeholder={t('process.visualTest.myopia.enterLetterPlaceholder')}
+                      placeholderTextColor="gray"
+                      autoCapitalize="characters"
+                      maxLength={1}
                       returnKeyType="done"
                       onSubmitEditing={dismissKeyboard}
                     />
@@ -271,14 +343,14 @@ export default function ColorblindTest() {
                     
                     <TouchableOpacity 
                       style={[styles.nextButton, { 
-                        backgroundColor: currentAnswer.trim() ? theme.primary : theme.formInputBackground,
-                        opacity: currentAnswer.trim() ? 1 : 0.7
+                        backgroundColor: currentAnswer.trim() !== '' ? theme.primary : theme.formInputBackground,
+                        opacity: currentAnswer.trim() !== '' ? 1 : 0.7
                       }]}
-                      onPress={handleNext}
-                      disabled={!currentAnswer.trim()}
+                      onPress={handleSubmit}
+                      disabled={currentAnswer.trim() === ''}
                     >
                       <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
-                        {currentTestIndex < colorblindTests.length - 1 
+                        {currentTestIndex < myopiaTests.length - 1 
                           ? t('process.visualTest.next') 
                           : t('process.visualTest.finish')}
                       </Text>
@@ -288,29 +360,29 @@ export default function ColorblindTest() {
               ) : (
                 <View style={styles.resultsContainer}>
                   <View style={[styles.scoreCircle, {
-                    backgroundColor: score >= colorblindTests.length / 2 ? '#34C759' : '#FF3B30'
+                    backgroundColor: correctAnswers >= PASSING_THRESHOLD ? '#34C759' : '#FF3B30'
                   }]}>
-                    <Text style={styles.scoreText}>{score}/{colorblindTests.length}</Text>
+                    <Text style={styles.scoreText}>{correctAnswers}/{myopiaTests.length}</Text>
                   </View>
                   
                   <Text style={[styles.resultTitle, { color: theme.text }]}>
-                    {score >= colorblindTests.length / 2 
-                      ? t('process.visualTest.colorblind.passTitle') 
-                      : t('process.visualTest.colorblind.failTitle')}
+                    {correctAnswers >= PASSING_THRESHOLD
+                      ? t('process.visualTest.myopia.passTitle') 
+                      : t('process.visualTest.myopia.failTitle')}
                   </Text>
                   
                   <Text style={[styles.resultDescription, { color: theme.text }]}>
-                    {score >= colorblindTests.length / 2 
-                      ? t('process.visualTest.colorblind.passDescription') 
-                      : t('process.visualTest.colorblind.failDescription')}
+                    {correctAnswers >= PASSING_THRESHOLD
+                      ? t('process.visualTest.myopia.passDescription') 
+                      : t('process.visualTest.myopia.failDescription')}
                   </Text>
                   
                   <TouchableOpacity 
-                    style={[styles.nextTestButton, { backgroundColor: theme.primary }]}
-                    onPress={handleNextTest}
+                    style={[styles.finishButton, { backgroundColor: theme.primary }]}
+                    onPress={handleFinish}
                   >
-                    <Text style={styles.nextTestButtonText}>
-                      {t('process.visualTest.nextTest')}
+                    <Text style={styles.finishButtonText}>
+                      {t('process.visualTest.finish')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -329,7 +401,6 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -385,43 +456,44 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 24,
-    lineHeight: 24,
     textAlign: 'center',
+    lineHeight: 22,
     width: '100%',
   },
-  imageContainer: {
+  letterContainer: {
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
-    marginBottom: 32,
+    marginBottom: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    borderRadius: 16,
     maxHeight: 200,
     alignSelf: 'center',
   },
-  testImage: {
-    width: '90%',
-    height: '90%',
-  },
-  questionText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 16,
-    textAlign: 'center',
-    width: '100%',
+  letterText: {
+    fontWeight: 'bold',
   },
   inputContainer: {
-    borderRadius: 8,
     marginBottom: 32,
     width: '100%',
     maxWidth: 300,
     alignSelf: 'center',
   },
-  input: {
-    fontSize: 18,
-    padding: 16,
+  inputLabel: {
+    fontSize: 16,
+    marginBottom: 12,
     textAlign: 'center',
+    fontWeight: '500',
+  },
+  input: {
+    height: 60,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -456,7 +528,6 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
   },
   resultsContainer: {
     alignItems: 'center',
@@ -487,14 +558,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 32,
   },
-  nextTestButton: {
+  finishButton: {
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 8,
     width: '100%',
     alignItems: 'center',
   },
-  nextTestButtonText: {
+  finishButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',

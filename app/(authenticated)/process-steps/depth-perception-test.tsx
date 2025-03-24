@@ -10,7 +10,11 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
-  Alert
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
@@ -26,7 +30,7 @@ const { width, height } = Dimensions.get('window');
 const depthTests = [
   {
     id: 1,
-    question: 'Select the letter that appears closest to you:',
+    type: 'letters',
     options: [
       { text: 'A', isCloser: false },
       { text: 'B', isCloser: true },
@@ -36,7 +40,7 @@ const depthTests = [
   },
   {
     id: 2,
-    question: 'Which number seems to float above the screen?',
+    type: 'numbers',
     options: [
       { text: '3', isCloser: false },
       { text: '7', isCloser: false },
@@ -46,7 +50,7 @@ const depthTests = [
   },
   {
     id: 3,
-    question: 'Select the symbol that appears closest to you:',
+    type: 'symbols',
     options: [
       { text: '◯', isCloser: false },
       { text: '△', isCloser: false },
@@ -58,7 +62,7 @@ const depthTests = [
 
 export default function DepthPerceptionTest() {
   const { id } = useLocalSearchParams();
-  const { completedProcesses, updateProcessVerificationStep } = useData();
+  const { completedProcesses, updateProcessVerificationStep, saveTestResults } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -67,11 +71,33 @@ export default function DepthPerceptionTest() {
   const [userAnswers, setUserAnswers] = useState<number[]>(Array(depthTests.length).fill(-1));
   const [testCompleted, setTestCompleted] = useState(false);
   const [score, setScore] = useState(0);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   
   const currentTest = depthTests[currentTestIndex];
   
+  // Add keyboard listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+  
   const handleGoBack = () => {
     router.back();
+  };
+  
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
   
   const handleOptionSelect = (index: number) => {
@@ -80,6 +106,9 @@ export default function DepthPerceptionTest() {
   
   const handleNext = () => {
     if (selectedOptionIndex === null) return;
+    
+    // Dismiss keyboard if visible
+    dismissKeyboard();
     
     // Save current answer
     const newAnswers = [...userAnswers];
@@ -104,19 +133,33 @@ export default function DepthPerceptionTest() {
       
       // Save progress to context
       if (id) {
-        // Using 'visualTest' as the verification step since that's what's defined in the context
+        // Mark visual test step as in progress
         updateProcessVerificationStep(id.toString(), 'visualTest', true);
+        
+        // Save test results
+        const testResults = {
+          score: correctAnswers,
+          totalQuestions: depthTests.length,
+          passed: correctAnswers >= (depthTests.length / 2) // Pass if at least half are correct
+        };
+        
+        saveTestResults(id.toString(), 'depthPerception', testResults);
       }
     }
   };
   
   const handleNextTest = () => {
     // Navigate to the next test (myopia test)
-    // This will be implemented later
-    router.back(); // For now, just go back
+    router.push({
+      pathname: '/(authenticated)/process-steps/myopia-test',
+      params: { id }
+    });
   };
   
   const handleSkip = () => {
+    // Dismiss keyboard if visible
+    dismissKeyboard();
+    
     Alert.alert(
       t('process.visualTest.skipTitle'),
       t('process.visualTest.skipConfirmation'),
@@ -162,154 +205,171 @@ export default function DepthPerceptionTest() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.text }]}>
-          {testCompleted 
-            ? t('process.visualTest.depthPerception.results') 
-            : t('process.visualTest.depthPerception.title')}
-        </Text>
-        <View style={styles.placeholder} />
-      </View>
-      
-      <View style={styles.progressContainer}>
-        <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
-          <View 
-            style={[
-              styles.progressFill, 
-              { 
-                width: `${testCompleted ? 100 : (currentTestIndex / depthTests.length) * 100}%`,
-                backgroundColor: theme.primary 
-              }
-            ]} 
-          />
-        </View>
-        <Text style={[styles.progressText, { color: theme.text }]}>
-          {testCompleted 
-            ? t('process.visualTest.completed') 
-            : `${currentTestIndex + 1}/${depthTests.length}`}
-        </Text>
-      </View>
-      
-      <ScrollView 
-        style={styles.scrollView} 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
       >
-        {!testCompleted ? (
-          <>
-            <Text style={[styles.description, { color: theme.text }]}>
-              {currentTest.question}
-            </Text>
-            
-            <View style={styles.imagesContainer}>
-              {currentTest.options.map((option, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.depthTextContainer,
-                    { 
-                      borderColor: selectedOptionIndex === index ? theme.primary : 'transparent',
-                      borderWidth: selectedOptionIndex === index ? 3 : 0,
-                      backgroundColor: theme.formInputBackground
-                    }
-                  ]}
-                  onPress={() => handleOptionSelect(index)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[
-                    styles.depthText, 
-                    { 
-                      color: theme.text,
-                      textShadowColor: 'rgba(0, 0, 0, ' + (option.isCloser ? '0.5' : '0.1') + ')',
-                      textShadowOffset: { width: option.isCloser ? 2 : 0, height: option.isCloser ? 4 : 1 },
-                      textShadowRadius: option.isCloser ? 6 : 2,
-                      transform: [
-                        { scale: option.isCloser ? 1.05 : 1 },
-                        { translateY: option.isCloser ? -3 : 0 }
-                      ],
-                      opacity: option.isCloser ? 1 : 0.9,
-                      elevation: option.isCloser ? 10 : 2,
-                      shadowColor: "#000",
-                      shadowOffset: { 
-                        width: option.isCloser ? 1 : 0, 
-                        height: option.isCloser ? 6 : 2 
-                      },
-                      shadowOpacity: option.isCloser ? 0.4 : 0.1,
-                      shadowRadius: option.isCloser ? 8 : 3
-                    }
-                  ]}>
-                    {option.text}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            
-            <View style={styles.buttonRow}>
-              <TouchableOpacity 
-                style={[styles.skipButton, { borderColor: theme.text }]}
-                onPress={handleSkip}
-              >
-                <Text style={[styles.skipButtonText, { color: theme.text }]}>
-                  {t('process.visualTest.skip')}
-                </Text>
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <View style={styles.innerContainer}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={24} color={theme.text} />
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.nextButton, { 
-                  backgroundColor: selectedOptionIndex !== null ? theme.primary : theme.formInputBackground,
-                  opacity: selectedOptionIndex !== null ? 1 : 0.7
-                }]}
-                onPress={handleNext}
-                disabled={selectedOptionIndex === null}
-              >
-                <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
-                  {currentTestIndex < depthTests.length - 1 
-                    ? t('process.visualTest.next') 
-                    : t('process.visualTest.finish')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <View style={styles.resultsContainer}>
-            <View style={[styles.scoreCircle, {
-              backgroundColor: score >= depthTests.length / 2 ? '#34C759' : '#FF3B30'
-            }]}>
-              <Text style={styles.scoreText}>{score}/{depthTests.length}</Text>
-            </View>
-            
-            <Text style={[styles.resultTitle, { color: theme.text }]}>
-              {score >= depthTests.length / 2 
-                ? t('process.visualTest.depthPerception.passTitle') 
-                : t('process.visualTest.depthPerception.failTitle')}
-            </Text>
-            
-            <Text style={[styles.resultDescription, { color: theme.text }]}>
-              {score >= depthTests.length / 2 
-                ? t('process.visualTest.depthPerception.passDescription') 
-                : t('process.visualTest.depthPerception.failDescription')}
-            </Text>
-            
-            <TouchableOpacity 
-              style={[styles.nextTestButton, { backgroundColor: theme.primary }]}
-              onPress={handleNextTest}
-            >
-              <Text style={styles.nextTestButtonText}>
-                {t('process.visualTest.nextTest')}
+              <Text style={[styles.title, { color: theme.text }]}>
+                {testCompleted 
+                  ? t('process.visualTest.depthPerception.results') 
+                  : t('process.visualTest.depthPerception.title')}
               </Text>
-            </TouchableOpacity>
+              <View style={styles.placeholder} />
+            </View>
+            
+            <View style={styles.progressContainer}>
+              <View style={[styles.progressBar, { backgroundColor: theme.formInputBackground }]}>
+                <View 
+                  style={[
+                    styles.progressFill, 
+                    { 
+                      width: `${testCompleted ? 100 : (currentTestIndex / depthTests.length) * 100}%`,
+                      backgroundColor: theme.primary 
+                    }
+                  ]} 
+                />
+              </View>
+              <Text style={[styles.progressText, { color: theme.text }]}>
+                {testCompleted 
+                  ? t('process.visualTest.completed') 
+                  : `${currentTestIndex + 1}/${depthTests.length}`}
+              </Text>
+            </View>
+            
+            <ScrollView 
+              style={styles.scrollView} 
+              contentContainerStyle={[
+                styles.scrollContent,
+                keyboardVisible && Platform.OS === 'ios' ? { paddingBottom: 200 } : {}
+              ]}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              {!testCompleted ? (
+                <>
+                  <Text style={[styles.description, { color: theme.text }]}>
+                    {t(`process.visualTest.depthPerception.questions.${currentTest.type}`)}
+                  </Text>
+                  
+                  <View style={styles.imagesContainer}>
+                    {currentTest.options.map((option, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[
+                          styles.depthTextContainer,
+                          { 
+                            borderColor: selectedOptionIndex === index ? theme.primary : 'transparent',
+                            borderWidth: selectedOptionIndex === index ? 3 : 0,
+                            backgroundColor: 'white'
+                          }
+                        ]}
+                        onPress={() => handleOptionSelect(index)}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={[
+                          styles.depthText, 
+                          { 
+                            color: 'black',
+                            textShadowColor: 'rgba(0, 0, 0, ' + (option.isCloser ? '0.5' : '0.1') + ')',
+                            textShadowOffset: { width: option.isCloser ? 2 : 0, height: option.isCloser ? 4 : 1 },
+                            textShadowRadius: option.isCloser ? 6 : 2,
+                            transform: [
+                              { scale: option.isCloser ? 1.05 : 1 },
+                              { translateY: option.isCloser ? -3 : 0 }
+                            ],
+                            opacity: option.isCloser ? 1 : 0.9,
+                            elevation: option.isCloser ? 10 : 2,
+                            shadowColor: "#000",
+                            shadowOffset: { 
+                              width: option.isCloser ? 1 : 0, 
+                              height: option.isCloser ? 6 : 2 
+                            },
+                            shadowOpacity: option.isCloser ? 0.4 : 0.1,
+                            shadowRadius: option.isCloser ? 8 : 3
+                          }
+                        ]}>
+                          {option.text}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  
+                  <View style={[styles.buttonRow, Platform.OS === 'ios' && keyboardVisible ? styles.keyboardVisibleButtons : {}]}>
+                    <TouchableOpacity 
+                      style={[styles.skipButton, { borderColor: theme.text }]}
+                      onPress={handleSkip}
+                    >
+                      <Text style={[styles.skipButtonText, { color: theme.text }]}>
+                        {t('process.visualTest.skip')}
+                      </Text>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity 
+                      style={[styles.nextButton, { 
+                        backgroundColor: selectedOptionIndex !== null ? theme.primary : theme.formInputBackground,
+                        opacity: selectedOptionIndex !== null ? 1 : 0.7
+                      }]}
+                      onPress={handleNext}
+                      disabled={selectedOptionIndex === null}
+                    >
+                      <Text style={[styles.nextButtonText, { color: '#FFFFFF' }]}>
+                        {currentTestIndex < depthTests.length - 1 
+                          ? t('process.visualTest.next') 
+                          : t('process.visualTest.finish')}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.resultsContainer}>
+                  <View style={[styles.scoreCircle, {
+                    backgroundColor: score >= depthTests.length / 2 ? '#34C759' : '#FF3B30'
+                  }]}>
+                    <Text style={styles.scoreText}>{score}/{depthTests.length}</Text>
+                  </View>
+                  
+                  <Text style={[styles.resultTitle, { color: theme.text }]}>
+                    {score >= depthTests.length / 2 
+                      ? t('process.visualTest.depthPerception.passTitle') 
+                      : t('process.visualTest.depthPerception.failTitle')}
+                  </Text>
+                  
+                  <Text style={[styles.resultDescription, { color: theme.text }]}>
+                    {score >= depthTests.length / 2 
+                      ? t('process.visualTest.depthPerception.passDescription') 
+                      : t('process.visualTest.depthPerception.failDescription')}
+                  </Text>
+                  
+                  <TouchableOpacity 
+                    style={[styles.nextTestButton, { backgroundColor: theme.primary }]}
+                    onPress={handleNextTest}
+                  >
+                    <Text style={styles.nextTestButtonText}>
+                      {t('process.visualTest.nextTest')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </ScrollView>
           </View>
-        )}
-      </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  innerContainer: {
     flex: 1,
   },
   header: {
@@ -391,6 +451,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 8,
+  },
+  keyboardVisibleButtons: {
+    marginTop: 16,
+    paddingBottom: 100,
   },
   skipButton: {
     paddingVertical: 14,
@@ -456,5 +521,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
 }); 
