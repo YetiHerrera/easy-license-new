@@ -122,5 +122,38 @@ export default {
     submit: 'Submit documents',
     submitSuccess: 'Documents submitted successfully',
     documentError: 'There was an issue with the document. Please try again.'
+  },
+  licenseUpload: {
+    title: 'Previous License',
+    subtitle: 'Upload your previous license to facilitate the renewal process',
+    optionalDocument: "This document is optional. If you don't have your previous license, you can continue without it.",
+    previousLicense: 'Previous driver\'s license',
+    frontSide: 'Front side',
+    backSide: 'Back side',
+    uploadInstructions: 'Tap to upload or take a photo',
+    delete: 'Delete',
+    continueWithLicense: 'Continue with license',
+    continueWithoutLicense: 'I don\'t have my previous license',
+    permissionRequired: 'Permission Required',
+    cameraPermissionMessage: 'We need access to your camera to take photos of your license.',
+    settings: 'Settings',
+    selectOption: 'Select Option',
+    captureMethod: 'How would you like to add your license?',
+    takePhoto: 'Take Photo',
+    chooseFromLibrary: 'Choose from Library',
+    error: 'Error',
+    captureError: 'There was an error capturing the license. Please try again.',
+    cameraError: 'There was an error opening the camera. Please try again.'
+  },
+  livenessVerification: {
+    title: 'Identity Verification',
+    subtitle: 'To confirm your identity, we need to perform a live video verification. Follow the instructions below.',
+    instruction1: 'Make sure you are in a well-lit place.',
+    instruction2: 'Keep your face within the frame throughout the process.',
+    instruction3: 'Follow the movement instructions that will appear on screen.',
+    startVerification: 'Start verification',
+    verificationComplete: 'Verification complete',
+    verificationFailed: 'Verification failed',
+    tryAgain: 'Try again'
   }
 }; 

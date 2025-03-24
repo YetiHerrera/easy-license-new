@@ -122,5 +122,38 @@ export default {
     submit: 'Enviar documentos',
     submitSuccess: 'Documentos enviados con éxito',
     documentError: 'Hubo un problema con el documento. Por favor, inténtalo de nuevo.'
+  },
+  licenseUpload: {
+    title: 'Licencia Anterior',
+    subtitle: 'Sube tu licencia anterior para facilitar el proceso de renovación',
+    optionalDocument: 'Este documento es opcional. Si no cuentas con tu licencia anterior, puedes continuar sin ella.',
+    previousLicense: 'Licencia de conducir anterior',
+    frontSide: 'Parte frontal',
+    backSide: 'Parte posterior',
+    uploadInstructions: 'Toca para subir o tomar una foto',
+    delete: 'Eliminar',
+    continueWithLicense: 'Continuar con licencia',
+    continueWithoutLicense: 'No tengo mi licencia anterior',
+    permissionRequired: 'Permiso requerido',
+    cameraPermissionMessage: 'Necesitamos acceso a tu cámara para tomar fotos de tu licencia.',
+    settings: 'Configuración',
+    selectOption: 'Seleccionar opción',
+    captureMethod: '¿Cómo deseas agregar tu licencia?',
+    takePhoto: 'Tomar foto',
+    chooseFromLibrary: 'Elegir de la galería',
+    error: 'Error',
+    captureError: 'Hubo un error al capturar la licencia. Inténtalo de nuevo.',
+    cameraError: 'Hubo un error al abrir la cámara. Inténtalo de nuevo.'
+  },
+  livenessVerification: {
+    title: 'Verificación de Identidad',
+    subtitle: 'Para confirmar tu identidad, necesitamos realizar una verificación de video en vivo. Sigue las instrucciones a continuación.',
+    instruction1: 'Asegúrate de estar en un lugar bien iluminado.',
+    instruction2: 'Mantén tu rostro dentro del marco durante todo el proceso.',
+    instruction3: 'Sigue las instrucciones de movimiento que aparecerán en pantalla.',
+    startVerification: 'Iniciar verificación',
+    verificationComplete: 'Verificación completada',
+    verificationFailed: 'Verificación fallida',
+    tryAgain: 'Intentar de nuevo'
   }
 }; 

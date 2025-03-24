@@ -180,6 +180,12 @@ export default function DocumentUpload() {
     }
   };
 
+  const handleSubmit = () => {
+    if (canContinue()) {
+      router.push('/(authenticated)/license-upload' as any);
+    }
+  };
+
   const renderDocumentSelector = () => {
     const { documentType } = documentData;
     
@@ -445,11 +451,11 @@ export default function DocumentUpload() {
               opacity: canContinue() ? 1 : 0.7
             }
           ]}
-          onPress={() => canContinue() && router.push('/(authenticated)/home' as any)}
+          onPress={handleSubmit}
           disabled={!canContinue()}
         >
           <Text variant="button" style={styles.buttonText}>
-            {t('documentUpload.submit')}
+            {t('documentUpload.continue')}
           </Text>
         </Pressable>
       </View>
