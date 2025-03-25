@@ -359,17 +359,18 @@ export default function Payment() {
                 />
               </View>
               
-              {/* Payment Security Note */}
-              <View style={styles.securityNote}>
-                <Ionicons name="lock-closed" size={16} color={theme.success} />
-                <Text style={[styles.securityText, { color: theme.text }]}>
-                  {t('payment.securityNote')}
-                </Text>
-              </View>
             </View>
           </View>
         </ScrollView>
 
+
+        {/* Payment Security Note */}
+        <View style={styles.securityNote}>
+          <Ionicons name="lock-closed" size={16} color={theme.success} />
+          <Text style={[styles.securityText, { color: theme.text }]}>
+            {t('payment.securityNote')}
+          </Text>
+        </View>
         <View style={styles.buttonContainer}>
           <Pressable
             style={[
@@ -468,8 +469,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 14,
+    marginBottom: 5,
     fontWeight: '600',
   },
   inputWithIcon: {
@@ -478,7 +479,7 @@ const styles = StyleSheet.create({
   inputIcon: {
     position: 'absolute',
     right: 15,
-    top: 17,
+    top: 10,
   },
   rowInputs: {
     flexDirection: 'row',
@@ -487,6 +488,7 @@ const styles = StyleSheet.create({
   securityNote: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
     marginBottom: 20,
   },

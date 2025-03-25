@@ -201,13 +201,6 @@ export default function LicenseDeliveryAddress() {
                 style={[styles.pickerButton, { 
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
-                  borderWidth: 1,
-                  height: 60,
-                  borderRadius: 10,
-                  paddingHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                 }]}
                 onPress={() => setShowStatePicker(true)}
               >
@@ -332,20 +325,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   inputContainer: {
-    marginBottom: 10,
+    marginBottom: 3,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 14,
+    marginBottom: 3,
     fontWeight: '600',
   },
   pickerButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
+    height: 48,
+    marginBottom: 15,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   pickerButtonText: {
-    fontSize: 16,
+    fontSize: 14,
   },
   errorText: {
     fontSize: 12,

@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   countryCodeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 8,
   },
   codeIcon: {
     marginLeft: 4,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    padding: 12,
+    padding: 8,
     fontSize: 16,
   },
   errorText: {

@@ -423,14 +423,6 @@ export default function LicenseInformation() {
                 style={[styles.pickerButton, { 
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
-                  borderWidth: 1,
-                  height: 60,
-                  marginBottom: 15,
-                  borderRadius: 10,
-                  paddingHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                 }]}
                 onPress={() => setShowLicenseTypePicker(true)}
               >
@@ -457,14 +449,6 @@ export default function LicenseInformation() {
                 style={[styles.pickerButton, { 
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
-                  borderWidth: 1,
-                  height: 60,
-                  borderRadius: 10,
-                  marginBottom: 15,
-                  paddingHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                 }]}
                 onPress={() => setShowRenewalYearsPicker(true)}
               >
@@ -491,14 +475,6 @@ export default function LicenseInformation() {
                 style={[styles.pickerButton, { 
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
-                  borderWidth: 1,
-                  height: 60,
-                  borderRadius: 10,
-                  paddingHorizontal: 16,
-                  marginBottom: 15,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                 }]}
                 onPress={() => setShowDatePicker(true)}
               >
@@ -578,7 +554,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
@@ -586,24 +562,31 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 30,
-    paddingHorizontal: 20,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
   inputContainer: {
-    marginBottom: 10,
+    marginBottom: 0,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 14,
+    marginBottom: 3,
     fontWeight: '600',
   },
   pickerButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
+    height: 48,
+    marginBottom: 15,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   pickerButtonText: {
-    fontSize: 16,
+    fontSize: 14,
   },
   errorText: {
     fontSize: 12,
@@ -645,7 +628,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   modalScroll: {
-    maxHeight: 300,
+    maxHeight: 350,
   },
   modalItem: {
     padding: 16,
@@ -678,7 +661,7 @@ const styles = StyleSheet.create({
   datePickerContainer: {
     flexDirection: 'row',
     height: 300,
-    paddingHorizontal: 16,
+    paddingHorizontal: 30,
   },
   datePickerColumn: {
     flex: 1,
@@ -703,7 +686,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent', // Add transparent border to prevent layout shift
   },
   datePickerItemSelected: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: 'rgb(122, 122, 122)',
   },
   datePickerItemText: {
     fontSize: 16,

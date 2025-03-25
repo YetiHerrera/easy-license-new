@@ -74,12 +74,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 10,
-    padding: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
   input: {
     flex: 1,
-    padding: 12,
-    fontSize: 16,
+    padding: 8,
+    fontSize: 14,
   },
   errorText: {
     fontSize: 12,
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   eyeIcon: {
-    padding: 10,
+    paddingRight: 8,
   },
 });
 
