@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme, StatusBar, ScrollView } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
@@ -9,7 +10,7 @@ import { useEffect, useState } from 'react';
 
 export default function VisualTest() {
   const { id } = useLocalSearchParams();
-  const { completedProcesses, updateProcessVerificationStep } = useData();
+  const { completedProcesses } = useData();
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   
@@ -50,19 +51,40 @@ export default function VisualTest() {
   };
   
   const handleStartTests = () => {
-    // Navigate to the first test (colorblind test)
-    router.push({
-      pathname: '/(authenticated)/process-steps/colorblind-test',
-      params: { id }
-    });
+    // Only allow starting tests if not completed
+    if (!currentProcess?.visualTestCompleted) {
+      router.push({
+        pathname: '/(authenticated)/process-steps/colorblind-test',
+        params: { id }
+      });
+    }
   };
   
-  // const handleCompleteTest = async () => {
-  //   if (currentProcess) {
-  //     await updateProcessVerificationStep(currentProcess.id, 'visualTest', true);
-  //     router.back();
-  //   }
-  // };
+  // Calculate test results summary if tests are completed
+  const getTestResultsSummary = () => {
+    if (!currentProcess?.testResults) return null;
+    
+    const results = currentProcess.testResults;
+    const summary = {
+      totalPassed: 0,
+      total: 0
+    };
+    
+    if (results.colorblind) {
+      summary.total++;
+      if (results.colorblind.passed) summary.totalPassed++;
+    }
+    if (results.depthPerception) {
+      summary.total++;
+      if (results.depthPerception.passed) summary.totalPassed++;
+    }
+    if (results.myopia) {
+      summary.total++;
+      if (results.myopia.passed) summary.totalPassed++;
+    }
+    
+    return summary;
+  };
 
   if (!currentProcess) {
     return (
@@ -75,8 +97,9 @@ export default function VisualTest() {
     );
   }
 
-  console.log('Rendering VisualTest with visualTestCompleted:', currentProcess.visualTestCompleted);
-  
+  const testResults = getTestResultsSummary();
+  const isCompleted = currentProcess.visualTestCompleted;
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <Stack.Screen
@@ -116,69 +139,118 @@ export default function VisualTest() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.description, { color: theme.text }]}>
-          {t('process.visualTest.description')}
+          {isCompleted 
+            ? t('process.visualTest.completedDescription')
+            : t('process.visualTest.description')}
         </Text>
         
-        <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.beforeBegin')}</Text>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              {t('process.visualTest.holdPhone')}
-            </Text>
+        {isCompleted ? (
+          <View style={[styles.completedContainer, { backgroundColor: theme.formInputBackground }]}>
+            {testResults ? (
+              <>
+                {testResults.totalPassed === testResults.total ? (
+                  <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
+                    <Ionicons name="checkmark-circle" size={24} color="#FFFFFF" />
+                    <Text style={styles.completedText}>{t('process.visualTest.completed')}</Text>
+                  </View>
+                ) : (
+                  <View style={[styles.completedBadge, { backgroundColor: '#FF9500' }]}>
+                    <Ionicons name="alert-circle" size={24} color="#FFFFFF" />
+                    <Text style={styles.completedText}>{t('process.visualTest.underReview')}</Text>
+                  </View>
+                )}
+                
+                <View style={styles.resultsContainer}>
+                  <Text style={[styles.resultsTitle, { color: theme.text }]}>
+                    {t('process.visualTest.testResults')}
+                  </Text>
+                  <Text style={[styles.resultsText, { color: theme.text }]}>
+                    {t('process.visualTest.testsPassed', { 
+                      passed: testResults.totalPassed,
+                      total: testResults.total 
+                    })}
+                  </Text>
+                  
+                  {testResults.totalPassed < testResults.total && (
+                    <Text style={[styles.reviewNote, { color: theme.text }]}>
+                      {t('process.visualTest.reviewNote')}
+                    </Text>
+                  )}
+                </View>
+              </>
+            ) : null}
           </View>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              {t('process.visualTest.wellLit')}
-            </Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#34C759" />
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              {t('process.visualTest.wearGlasses')}
-            </Text>
-          </View>
-        </View>
-        
-        <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.threeTests')}</Text>
-          <View style={styles.testInfo}>
-            <View style={styles.testNumberCircle}>
-              <Text style={styles.testNumber}>1</Text>
+        ) : (
+          <>
+            <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
+              <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.beforeBegin')}</Text>
+              <View style={styles.infoItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={[styles.infoText, { color: theme.text }]}>
+                  {t('process.visualTest.holdPhone')}
+                </Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={[styles.infoText, { color: theme.text }]}>
+                  {t('process.visualTest.wellLit')}
+                </Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={[styles.infoText, { color: theme.text }]}>
+                  {t('process.visualTest.wearGlasses')}
+                </Text>
+              </View>
             </View>
-            <View style={styles.testDescription}>
-              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.colorblind.title')}</Text>
-              <Text style={[styles.infoText, { color: theme.text }]}>
-                {t('process.visualTest.colorblind.description')}
-              </Text>
+            
+            <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
+              <Text style={[styles.infoTitle, { color: theme.text }]}>{t('process.visualTest.threeTests')}</Text>
+              <View style={styles.testInfo}>
+                <View style={styles.testNumberCircle}>
+                  <Text style={styles.testNumber}>1</Text>
+                </View>
+                <View style={styles.testDescription}>
+                  <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.colorblind.title')}</Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {t('process.visualTest.colorblind.description')}
+                  </Text>
+                </View>
+              </View>
+              
+              <View style={styles.testInfo}>
+                <View style={styles.testNumberCircle}>
+                  <Text style={styles.testNumber}>2</Text>
+                </View>
+                <View style={styles.testDescription}>
+                  <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.depthPerception.title')}</Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {t('process.visualTest.depthPerception.description')}
+                  </Text>
+                </View>
+              </View>
+              
+              <View style={styles.testInfo}>
+                <View style={styles.testNumberCircle}>
+                  <Text style={styles.testNumber}>3</Text>
+                </View>
+                <View style={styles.testDescription}>
+                  <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.myopia.title')}</Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {t('process.visualTest.myopia.description')}
+                  </Text>
+                </View>
+              </View>
             </View>
-          </View>
-          
-          <View style={styles.testInfo}>
-            <View style={styles.testNumberCircle}>
-              <Text style={styles.testNumber}>2</Text>
-            </View>
-            <View style={styles.testDescription}>
-              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.depthPerception.title')}</Text>
-              <Text style={[styles.infoText, { color: theme.text }]}>
-                {t('process.visualTest.depthPerception.description')}
-              </Text>
-            </View>
-          </View>
-          
-          <View style={styles.testInfo}>
-            <View style={styles.testNumberCircle}>
-              <Text style={styles.testNumber}>3</Text>
-            </View>
-            <View style={styles.testDescription}>
-              <Text style={[styles.testTitle, { color: theme.text }]}>{t('process.visualTest.myopia.title')}</Text>
-              <Text style={[styles.infoText, { color: theme.text }]}>
-                {t('process.visualTest.myopia.description')}
-              </Text>
-            </View>
-          </View>
-        </View>
+            
+            <TouchableOpacity 
+              style={[styles.startButton, { backgroundColor: theme.primary }]}
+              onPress={handleStartTests}
+            >
+              <Text style={styles.startButtonText}>{t('process.visualTest.startTests')}</Text>
+            </TouchableOpacity>
+          </>
+        )}
         
         <View style={styles.referenceContainer}>
           <Text style={[styles.referenceLabel, { color: theme.text }]}>
@@ -188,22 +260,6 @@ export default function VisualTest() {
             {currentProcess.id}
           </Text>
         </View>
-        
-        {!currentProcess.visualTestCompleted && (
-          <TouchableOpacity 
-            style={[styles.startButton, { backgroundColor: theme.primary }]}
-            onPress={handleStartTests}
-          >
-            <Text style={styles.startButtonText}>{t('process.visualTest.startTests')}</Text>
-          </TouchableOpacity>
-        )}
-        
-        {currentProcess.visualTestCompleted && (
-          <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
-            <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.completedText}>{t('process.visualTest.testsCompleted')}</Text>
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -344,20 +400,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  completedContainer: {
+    padding: 24,
+    borderRadius: 16,
+    marginBottom: 24,
+    alignItems: 'center',
+  },
   completedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginTop: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 16,
     gap: 8,
   },
   completedText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  resultsContainer: {
+    alignItems: 'center',
+  },
+  resultsTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  resultsText: {
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  reviewNote: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
   },
   errorText: {
     fontSize: 16,

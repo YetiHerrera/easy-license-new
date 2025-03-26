@@ -279,23 +279,19 @@ export default function DepthPerceptionTest() {
                         <Text style={[
                           styles.depthText, 
                           { 
+                            fontSize: option.isCloser ? 88 : 70,
                             color: 'black',
-                            textShadowColor: 'rgba(0, 0, 0, ' + (option.isCloser ? '0.5' : '0.1') + ')',
-                            textShadowOffset: { width: option.isCloser ? 2 : 0, height: option.isCloser ? 4 : 1 },
-                            textShadowRadius: option.isCloser ? 6 : 2,
+                            textShadowColor: 'rgba(0, 0, 0, ' + (option.isCloser ? '0.3' : '0.1') + ')',
+                            textShadowOffset: { 
+                              width: option.isCloser ? 5 : 0, 
+                              height: option.isCloser ? 5 : 1 
+                            },
+                            textShadowRadius: option.isCloser ? 3 : 1,
                             transform: [
                               { scale: option.isCloser ? 1.05 : 1 },
                               { translateY: option.isCloser ? -3 : 0 }
                             ],
                             opacity: option.isCloser ? 1 : 0.9,
-                            elevation: option.isCloser ? 10 : 2,
-                            shadowColor: "#000",
-                            shadowOffset: { 
-                              width: option.isCloser ? 1 : 0, 
-                              height: option.isCloser ? 6 : 2 
-                            },
-                            shadowOpacity: option.isCloser ? 0.4 : 0.1,
-                            shadowRadius: option.isCloser ? 8 : 3
                           }
                         ]}>
                           {option.text}
@@ -437,7 +433,6 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   depthText: {
-    fontSize: 70,
     fontWeight: 'bold',
   },
   buttonRow: {

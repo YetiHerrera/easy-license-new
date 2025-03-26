@@ -156,7 +156,22 @@ export default {
       skipTitle: '¿Omitir esta pregunta?',
       skipConfirmation: '¿Estás seguro de que deseas omitir esta pregunta? Se marcará como incorrecta.',
       completed: 'Completado',
-      nextTest: 'Siguiente Prueba'
+      nextTest: 'Siguiente Prueba',
+      completedDescription: 'Has completado todas las pruebas visuales. Aquí están tus resultados:',
+      testResults: 'Resumen de Resultados',
+      testsPassed: '{{passed}} de {{total}} pruebas aprobadas',
+      allTestsCompleted: 'Todas las pruebas visuales han sido completadas',
+      cannotRetake: 'No puedes volver a realizar las pruebas una vez completadas',
+      underReview: 'En Revisión',
+      reviewNote: 'Tus resultados de las pruebas están siendo revisados por nuestro equipo. Te notificaremos si se requieren pasos adicionales.',
+      testSummary: {
+        colorblind: 'Prueba de Visión de Color',
+        depthPerception: 'Prueba de Percepción de Profundidad',
+        myopia: 'Prueba de Agudeza Visual',
+        passed: 'Aprobado',
+        failed: 'No Aprobado',
+        skipped: 'Omitido'
+      }
     }
   },
   userInformation: {

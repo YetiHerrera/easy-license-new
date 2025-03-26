@@ -156,7 +156,22 @@ export default {
       skipTitle: 'Skip this question?',
       skipConfirmation: 'Are you sure you want to skip this question? It will be marked as incorrect.',
       completed: 'Completed',
-      nextTest: 'Next Test'
+      nextTest: 'Next Test',
+      completedDescription: 'You have completed all the visual tests. Here are your results:',
+      testResults: 'Test Results Summary',
+      testsPassed: '{{passed}} out of {{total}} tests passed',
+      allTestsCompleted: 'All visual tests have been completed',
+      cannotRetake: 'You cannot retake the tests once completed',
+      underReview: 'Under Review',
+      reviewNote: 'Your test results are being reviewed by our team. We will notify you of any additional steps required.',
+      testSummary: {
+        colorblind: 'Color Vision Test',
+        depthPerception: 'Depth Perception Test',
+        myopia: 'Visual Acuity Test',
+        passed: 'Passed',
+        failed: 'Failed',
+        skipped: 'Skipped'
+      }
     }
   },
   userInformation: {

@@ -296,7 +296,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           
           let updatedProcess;
           if (step === 'visualTest') {
-            updatedProcess = { ...process, visualTestCompleted: completed };
+            // For visual test, we need to check if all tests are completed
+            const hasAllTestResults = process.testResults?.colorblind &&
+                                    process.testResults?.depthPerception &&
+                                    process.testResults?.myopia;
+            
+            // Only mark as completed if all tests are done
+            updatedProcess = { 
+              ...process, 
+              visualTestCompleted: completed && hasAllTestResults ? true : process.visualTestCompleted 
+            };
           } else {
             updatedProcess = { ...process, transitVerificationCompleted: completed };
           }
@@ -331,9 +340,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             [testType]: results
           };
           
+          // Check if all tests are completed after this update
+          const hasAllTests = updatedTestResults.colorblind &&
+                            updatedTestResults.depthPerception &&
+                            updatedTestResults.myopia;
+          
           return { 
             ...process, 
-            testResults: updatedTestResults
+            testResults: updatedTestResults,
+            // Automatically mark visual test as completed if all tests are done
+            visualTestCompleted: hasAllTests ? true : process.visualTestCompleted
           };
         }
         return process;
