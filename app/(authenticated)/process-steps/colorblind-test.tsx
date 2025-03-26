@@ -17,7 +17,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
@@ -72,15 +72,6 @@ export default function ColorblindTest() {
       keyboardDidHideListener.remove();
     };
   }, []);
-  
-  const handleGoBack = () => {
-    if (currentTestIndex > 0) {
-      setCurrentTestIndex(currentTestIndex - 1);
-      setCurrentAnswer(userAnswers[currentTestIndex - 1]);
-    } else {
-      router.back();
-    }
-  };
   
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -178,6 +169,21 @@ export default function ColorblindTest() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Stack.Screen
+        options={{
+          title: t('process.visualTest.colorblind.title'),
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: theme.background },
+          gestureEnabled: false,
+          headerLeft: () => null,
+          headerShown: false,
+        }}
+        listeners={{
+          beforeRemove: (e) => {
+            e.preventDefault();
+          },
+        }}
+      />
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
       <KeyboardAvoidingView
@@ -186,14 +192,6 @@ export default function ColorblindTest() {
       >
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={theme.text} />
-            </TouchableOpacity>
-            <Text style={[styles.title, { color: theme.text }]}>
-              {testCompleted 
-                ? t('process.visualTest.colorblind.results') 
-                : t('process.visualTest.colorblind.title')}
-            </Text>
             <View style={styles.placeholder} />
           </View>
           
@@ -332,16 +330,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    flex: 1,
-    marginHorizontal: 16,
   },
   placeholder: {
     width: 40,

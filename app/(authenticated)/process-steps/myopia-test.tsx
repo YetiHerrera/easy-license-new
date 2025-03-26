@@ -16,7 +16,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
 import { Colors } from '@/constants/Colors';
 import { t } from '@/constants/i18n';
@@ -72,10 +72,6 @@ export default function MyopiaTest() {
       keyboardDidHideListener.remove();
     };
   }, []);
-  
-  const handleGoBack = () => {
-    router.back();
-  };
   
   const handleAnswerChange = (text: string) => {
     // Convert to uppercase for easier comparison
@@ -238,6 +234,21 @@ export default function MyopiaTest() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Stack.Screen
+        options={{
+          title: t('process.visualTest.myopia.title'),
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: theme.background },
+          gestureEnabled: false,
+          headerLeft: () => null,
+          headerShown: false,
+        }}
+        listeners={{
+          beforeRemove: (e) => {
+            e.preventDefault();
+          },
+        }}
+      />
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       
       <KeyboardAvoidingView
@@ -246,14 +257,6 @@ export default function MyopiaTest() {
       >
         <View style={styles.innerContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={theme.text} />
-            </TouchableOpacity>
-            <Text style={[styles.title, { color: theme.text }]}>
-              {testCompleted 
-                ? t('process.visualTest.myopia.results') 
-                : t('process.visualTest.myopia.title')}
-            </Text>
             <View style={styles.placeholder} />
           </View>
           
@@ -404,16 +407,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    flex: 1,
-    marginHorizontal: 16,
   },
   placeholder: {
     width: 40,
