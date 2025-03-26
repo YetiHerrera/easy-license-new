@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, useColorScheme } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, useColorScheme, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
@@ -23,6 +23,27 @@ export default function SignupScreen() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -80,62 +101,84 @@ export default function SignupScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.primaryTitles }]}>{t('auth.createAccount')}</Text>
-          <Text style={[styles.subtitle, { color: theme.text }]}>
-            {t('auth.createAccountSubtitle')}
-          </Text>
-          
-          <FormInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder={t('auth.email')}
-            keyboardType="email-address"
-            error={errors.email}
-          />
-          
-          <PhoneInput
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            countryCode={countryCode}
-            onChangeCountryCode={setCountryCode}
-            error={errors.phoneNumber}
-          />
-          
-          <FormInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder={t('auth.password')}
-            isPassword
-            error={errors.password}
-          />
-          
-          {errors.submit && (
-            <Text style={[styles.errorText, { color: theme.danger }]}>{errors.submit}</Text>
-          )}
-          
-          <TouchableOpacity 
-            style={[
-              styles.signupButton, 
-              { backgroundColor: theme.primary },
-              isLoading && styles.disabledButton
-            ]} 
-            onPress={handleSignup}
-            disabled={isLoading}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ScrollView 
+            contentContainerStyle={[
+              styles.scrollContent,
+              keyboardVisible && styles.scrollContentKeyboard
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.signupButtonText}>
-              {isLoading ? t('auth.sending') : t('auth.createAccount')}
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={goToLogin}>
-            <Text style={[styles.loginText, { color: theme.text, textDecorationLine: 'underline' }]}>
-              {t('auth.haveAccount')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <View style={styles.content}>
+              <View style={styles.logoContainer}>
+                <Image 
+                  source={require('@/assets/images/LogoMaycom.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              <Text style={[styles.title, { color: theme.primaryTitles }]}>{t('auth.createAccount')}</Text>
+              <Text style={[styles.subtitle, { color: theme.text }]}>
+                {t('auth.createAccountSubtitle')}
+              </Text>
+              
+              <FormInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('auth.email')}
+                keyboardType="email-address"
+                error={errors.email}
+              />
+              
+              <PhoneInput
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                countryCode={countryCode}
+                onChangeCountryCode={setCountryCode}
+                error={errors.phoneNumber}
+              />
+              
+              <FormInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder={t('auth.password')}
+                isPassword
+                error={errors.password}
+              />
+              
+              {errors.submit && (
+                <Text style={[styles.errorText, { color: theme.danger }]}>{errors.submit}</Text>
+              )}
+              
+              <TouchableOpacity 
+                style={[
+                  styles.signupButton, 
+                  { backgroundColor: theme.primary },
+                  isLoading && styles.disabledButton
+                ]} 
+                onPress={handleSignup}
+                disabled={isLoading}
+              >
+                <Text style={styles.signupButtonText}>
+                  {isLoading ? t('auth.sending') : t('auth.createAccount')}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={goToLogin}>
+                <Text style={[styles.loginText, { color: theme.text, textDecorationLine: 'underline' }]}>
+                  {t('auth.haveAccount')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -144,13 +187,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     padding: 20,
   },
+  scrollContentKeyboard: {
+    paddingBottom: Platform.OS === 'ios' ? 120 : 20,
+  },
   content: {
     flex: 1,
     justifyContent: 'center',
+    paddingTop: 40,
   },
   title: {
     fontSize: 28,
@@ -213,5 +263,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 15,
-  }
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logoImage: {
+    width: 180,
+    height: 100,
+  },
 }); 

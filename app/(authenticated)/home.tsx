@@ -153,6 +153,15 @@ export default function Home() {
           <Text style={styles.buttonText}>{t('home.emptyState.startButton')}</Text>
         </TouchableOpacity>
       </View>
+      
+      { process.visualTestCompleted && <View style={styles.logoContainer}>
+        <Image 
+          source={require('@/assets/images/LogoMaycom.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+        </View>
+      }
     </SafeAreaView>
   );
 
@@ -339,7 +348,18 @@ export default function Home() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={renderProcessSteps}
+        ListFooterComponent={() => (
+          <>
+            {renderProcessSteps()}
+            <View style={styles.logoContainer}>
+              <Image 
+                source={require('@/assets/images/LogoMaycom.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+          </>
+        )}
       />
     </SafeAreaView>
   );
@@ -578,5 +598,15 @@ const styles = StyleSheet.create({
   stepsHelp: {
     textAlign: 'center',
     fontSize: 14,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    marginTop: 'auto',
+  },
+  logoImage: {
+    width: 120,
+    height: 60,
   },
 }); 

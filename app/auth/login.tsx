@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useColorScheme, Image, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
@@ -19,6 +19,27 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -69,45 +90,71 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.primaryTitles }]}>{t('auth.login')}</Text>
-          <Text style={[styles.subtitle, { color: theme.text }]}>
-            {t('auth.signInSubtitle')}
-          </Text>
-          
-          <FormInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder={t('auth.email')}
-            keyboardType="email-address"
-            error={errors.email}
-          />
-          
-          <FormInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder={t('auth.password')}
-            isPassword
-            error={errors.password}
-          />
-          
-          <TouchableOpacity style={styles.forgotPasswordButton}>
-            <Text style={[styles.forgotPasswordText, { color: theme.text, fontWeight: 'bold' }]}>{t('auth.forgotPassword')}</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.loginButton, { backgroundColor: theme.primary }]} 
-            onPress={handleLogin}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ScrollView 
+            contentContainerStyle={[
+              styles.scrollContent,
+              keyboardVisible && styles.scrollContentKeyboard
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.loginButtonText}>{t('auth.signIn')}</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity onPress={goToSignup}>
-            <Text style={[styles.signupText, { color: theme.text, textDecorationLine: 'underline' }]}>{t('auth.noAccount')}</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <View style={styles.content}>
+              <View style={styles.logoContainer}>
+                <Image 
+                  source={require('@/assets/images/LogoMaycom.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              <Text style={[styles.title, { color: theme.primaryTitles }]}>{t('auth.login')}</Text>
+              <Text style={[styles.subtitle, { color: theme.text }]}>
+                {t('auth.signInSubtitle')}
+              </Text>
+              
+              <FormInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('auth.email')}
+                keyboardType="email-address"
+                error={errors.email}
+              />
+              
+              <FormInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder={t('auth.password')}
+                isPassword
+                error={errors.password}
+              />
+              
+              <TouchableOpacity style={styles.forgotPasswordButton}>
+                <Text style={[styles.forgotPasswordText, { color: theme.text, fontWeight: 'bold' }]}>
+                  {t('auth.forgotPassword')}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.loginButton, { backgroundColor: theme.primary }]} 
+                onPress={handleLogin}
+              >
+                <Text style={styles.loginButtonText}>{t('auth.signIn')}</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={goToSignup}>
+                <Text style={[styles.signupText, { color: theme.text, textDecorationLine: 'underline' }]}>
+                  {t('auth.noAccount')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -116,13 +163,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     padding: 20,
   },
+  scrollContentKeyboard: {
+    paddingBottom: Platform.OS === 'ios' ? 120 : 20,
+  },
   content: {
     flex: 1,
     justifyContent: 'center',
+    paddingTop: 40,
   },
   title: {
     fontSize: 28,
@@ -184,5 +238,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 15,
-  }
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logoImage: {
+    width: 180,
+    height: 100,
+  },
 }); 
