@@ -37,12 +37,12 @@ export default function UserInformation() {
           headerStyle: { backgroundColor: theme.background },
         }}
       />
-      
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
           {t('userInformation.requirements.title')}
         </Text>
-        
+
         <Text variant="body" style={[styles.subtitle, { color: theme.text }]}>
           {t('userInformation.subtitle')}
         </Text>
@@ -81,7 +81,7 @@ export default function UserInformation() {
       }]}>
         <Pressable
           style={[styles.button, { backgroundColor: theme.primary }]}
-          onPress={() => router.push('/(authenticated)/document-upload' as any)}
+          onPress={() => router.push('/(authenticated)/process-review/license-information' as any)}
         >
           <Text variant="button" style={styles.buttonText}>
             {t('userInformation.startProcess')}

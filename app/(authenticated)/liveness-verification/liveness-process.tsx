@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, Image } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, Image, Alert } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { useData } from '@/contexts/DataContext';
 
 // Define possible states for the verification process
 type VerificationState = 'initial' | 'recording' | 'completed' | 'verified';
@@ -15,6 +16,7 @@ type VerificationState = 'initial' | 'recording' | 'completed' | 'verified';
 export default function LivenessProcess() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
+  const { completedProcesses, updateProcessVerificationStep } = useData();
   const [permission, requestPermission] = useCameraPermissions();
   const [verificationState, setVerificationState] = useState<VerificationState>('initial');
   const cameraRef = useRef(null);
@@ -43,14 +45,40 @@ export default function LivenessProcess() {
     }
   };
 
-  const submitVerification = () => {
+  const submitVerification = async () => {
     // This would submit the verification to a backend service
     setVerificationState('verified');
-    
+
     // In a real implementation, you would wait for a response from the server
     // before navigating away or showing success
-    setTimeout(() => {
-      router.push('/(authenticated)/process-review/license-information' as any);
+    setTimeout(async () => {
+      try {
+        // Get the first process (assuming it's the active one)
+        if (completedProcesses && completedProcesses.length > 0) {
+          const process = completedProcesses[0];
+
+          // Update the document verification step to completed
+          await updateProcessVerificationStep(process.id, 'documentVerification', true);
+
+          // Show success message and navigate back to home
+          Alert.alert(
+            t('livenessVerification.successTitle') || 'Verification Complete',
+            t('livenessVerification.successMessage') || 'Your documents have been successfully verified.',
+            [
+              {
+                text: t('common.ok') || 'OK',
+                onPress: () => router.replace('/(authenticated)/home' as any),
+              },
+            ]
+          );
+        } else {
+          // If no process is found, just navigate back to home
+          router.replace('/(authenticated)/home' as any);
+        }
+      } catch (error) {
+        console.error('Error updating document verification status:', error);
+        router.replace('/(authenticated)/home' as any);
+      }
     }, 3000);
   };
 
@@ -127,7 +155,7 @@ export default function LivenessProcess() {
           headerTintColor: '#fff',
         }}
       />
-      
+
       <View style={styles.header}>
         <Text variant="title" style={styles.headerTitle}>
           {t('livenessVerification.title')}
@@ -153,7 +181,7 @@ export default function LivenessProcess() {
               </View>
             )}
           </CameraView>
-          
+
           {verificationState === 'verified' && (
             <View style={styles.successOverlay}>
               <View style={styles.successIconContainer}>

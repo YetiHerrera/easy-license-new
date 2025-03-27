@@ -86,10 +86,16 @@ export default {
     steps: {
       title: 'Process Steps',
       visualTest: 'Visual Test',
+      documentVerification: 'Document Verification',
       transitVerification: 'Transit Department Verification',
-      visualTestDescription: 'Visit a testing center to complete your vision test',
+      visualTestDescription: 'Take your eye exam to proceed to the next step',
+      documentVerificationDescription: 'Upload your documents for verification',
       transitVerificationDescription: 'This process is automated by the Transit Department',
-      helpText: 'Tap on any step to view details and status'
+      helpText: 'Tap on any step to view details and status',
+      stepLocked: 'Complete previous step to unlock',
+      stepAvailable: 'Available now',
+      stepCompleted: 'Step completed',
+      sequentialCompletion: 'Steps must be completed in order'
     },
     error: {
       notFound: 'Process not found'

@@ -86,10 +86,16 @@ export default {
     steps: {
       title: 'Pasos del Proceso',
       visualTest: 'Prueba Visual',
+      documentVerification: 'Verificación de Documentos',
       transitVerification: 'Verificación del Departamento de Tránsito',
-      visualTestDescription: 'Visite un centro de pruebas para completar su examen visual',
+      visualTestDescription: 'Realiza tu examen visual para proceder con el siguiente paso',
+      documentVerificationDescription: 'Sube tus documentos para verificación',
       transitVerificationDescription: 'Este proceso es automatizado por el Departamento de Tránsito',
-      helpText: 'Toque cualquier paso para ver detalles y estado'
+      helpText: 'Toque cualquier paso para ver detalles y estado',
+      stepLocked: 'Completa el paso anterior para desbloquear',
+      stepAvailable: 'Disponible ahora',
+      stepCompleted: 'Paso completado',
+      sequentialCompletion: 'Los pasos deben completarse en orden'
     },
     error: {
       notFound: 'Proceso no encontrado'

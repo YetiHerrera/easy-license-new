@@ -79,22 +79,23 @@ export default function Home() {
         return `${process.licenseInformation.names}`;
       }
     }
-    
+
     if (userProfile && userProfile.email) {
       return userProfile.email.split('@')[0];
     }
-    
+
     return t('home.welcome');
   };
 
-  const handleToggleStep = async (processId: string, step: 'visualTest' | 'transitVerification', currentStatus: boolean) => {
-    await updateProcessVerificationStep(processId, step, !currentStatus);
-  };
-
-  const handleNavigateToStep = (processId: string, step: 'visualTest' | 'transitVerification') => {
+  const handleNavigateToStep = (processId: string, step: 'visualTest' | 'documentVerification' | 'transitVerification') => {
     if (step === 'visualTest') {
       router.push({
         pathname: '/process-steps/visual-test',
+        params: { id: processId }
+      });
+    } else if (step === 'documentVerification') {
+      router.push({
+        pathname: '/document-upload',
         params: { id: processId }
       });
     } else {
@@ -119,7 +120,7 @@ export default function Home() {
       ) : (
         <View style={styles.welcomeTextContainer} />
       )}
-      
+
       <TouchableOpacity 
         style={[styles.logoutButton, { backgroundColor: theme.formInputBackground }]} 
         onPress={handleLogout}
@@ -133,7 +134,7 @@ export default function Home() {
     <SafeAreaView style={[styles.safeContainer, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       <WelcomeHeader />
-      
+
       <View style={styles.content}>
         <Image 
           source={require('@/assets/images/image_licence_blank.png')}
@@ -153,15 +154,14 @@ export default function Home() {
           <Text style={styles.buttonText}>{t('home.emptyState.startButton')}</Text>
         </TouchableOpacity>
       </View>
-      
-      { process.visualTestCompleted && <View style={styles.logoContainer}>
+
+      <View style={styles.logoContainer}>
         <Image 
           source={require('@/assets/images/LogoMaycom.png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
         </View>
-      }
     </SafeAreaView>
   );
 
@@ -172,19 +172,19 @@ export default function Home() {
       : process.processTypes.includes('replacement') 
         ? theme.secondary 
         : theme.primary;
-    
+
     // Create gradient colors
     const gradientStart = `${primaryColor}CC`; // 80% opacity
     const gradientEnd = `${primaryColor}`;
-    
+
     // Get status color
     const statusColor = getStatusColor(process.status);
-    
+
     // Determine process type text
     const getProcessTypeDisplay = () => {
       const hasRenewal = process.processTypes.includes('renewal');
       const hasReplacement = process.processTypes.includes('replacement');
-      
+
       if (hasRenewal && hasReplacement) {
         return (
           <View style={styles.typeChip}>
@@ -215,7 +215,7 @@ export default function Home() {
       }
       return null;
     };
-    
+
     return (
       <View style={[styles.processCardContainer, { shadowColor: theme.text }]}>
         <LinearGradient
@@ -233,7 +233,7 @@ export default function Home() {
               </Text>
             </View>
           </View>
-          
+
           {/* License Info */}
           <View style={styles.licenseInfoContainer}>
             <View style={styles.licenseInfoRow}>
@@ -241,19 +241,19 @@ export default function Home() {
                 <Text style={styles.infoLabel}>{t('licenseInformation.dpi')}</Text>
                 <Text style={styles.infoValue}>{process.licenseInformation.dpi}</Text>
               </View>
-              
+
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>{t('process.licenseType')}</Text>
                 <Text style={styles.infoValue}>{process.licenseInformation.licenseType}</Text>
               </View>
             </View>
-            
+
             <View style={styles.licenseInfoRow}>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>{t('process.paymentDate')}</Text>
                 <Text style={styles.infoValue}>{formatDate(process.paymentDate)}</Text>
               </View>
-              
+
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>{t('licenseInformation.renewalYears')}</Text>
                 <Text style={styles.infoValue}>
@@ -264,7 +264,7 @@ export default function Home() {
               </View>
             </View>
           </View>
-          
+
           {/* Card Footer */}
           <View style={styles.cardFooter}>
             {getProcessTypeDisplay()}
@@ -279,24 +279,59 @@ export default function Home() {
     if (!completedProcesses || completedProcesses.length === 0) {
       return null;
     }
-    
+
     // Use the first process for demonstration
     const process = completedProcesses[0];
-    
+
+    // Determine step availability based on completion of previous steps
+    const isVisualTestAvailable = true; // First step is always available
+    const isDocumentVerificationAvailable = process.visualTestCompleted;
+    const isTransitVerificationAvailable = process.documentVerificationCompleted;
+
+    // Get status text for each step
+    const getStepStatusText = (isCompleted: boolean = false, isAvailable: boolean = false) => {
+      if (isCompleted) {
+        return t('process.steps.stepCompleted');
+      } else if (isAvailable) {
+        return t('process.steps.stepAvailable');
+      } else {
+        return t('process.steps.stepLocked');
+      }
+    };
+
+    // Get status color for each step
+    const getStepStatusColor = (isCompleted: boolean = false, isAvailable: boolean = false) => {
+      if (isCompleted) {
+        return '#34C759'; // Green for completed
+      } else if (isAvailable) {
+        return '#007AFF'; // Blue for available
+      } else {
+        return '#999999'; // Gray for locked
+      }
+    };
+
     return (
       <View style={[styles.processStepsSection, { backgroundColor: theme.background }]}>
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           {t('process.steps.title')}
         </Text>
-        
+
+        <Text style={[styles.stepsHelp, { color: theme.text + '99', marginBottom: 12 }]}>
+          {t('process.steps.sequentialCompletion')}
+        </Text>
+
         <View style={[styles.stepsCard, { backgroundColor: theme.formInputBackground }]}>
           {/* Visual Test Step */}
           <TouchableOpacity 
             style={styles.stepButton}
             onPress={() => handleNavigateToStep(process.id, 'visualTest')}
+            activeOpacity={isVisualTestAvailable ? 0.7 : 1}
           >
             <View style={styles.stepRow}>
-              <View style={[styles.stepIndicator, process.visualTestCompleted ? styles.stepCompleted : styles.stepPending]}>
+              <View style={[
+                styles.stepIndicator, 
+                process.visualTestCompleted ? styles.stepCompleted : (isVisualTestAvailable ? styles.stepAvailable : styles.stepLocked)
+              ]}>
                 {process.visualTestCompleted ? 
                   <AntDesign name="check" size={14} color="#FFFFFF" /> : 
                   <View style={styles.stepDot} />
@@ -304,32 +339,116 @@ export default function Home() {
               </View>
               <View style={styles.stepTextContainer}>
                 <Text style={[styles.stepText, { color: theme.text }]}>{t('process.steps.visualTest')}</Text>
-                <Text style={[styles.stepDescription, { color: theme.text + '99' }]}>{t('process.steps.visualTestDescription')}</Text>
+                <Text style={[styles.stepDescription, { color: theme.text + '99' }]}>
+                  {t('process.steps.visualTestDescription')}
+                </Text>
+                <Text style={[
+                  styles.stepStatus, 
+                  { color: getStepStatusColor(process.visualTestCompleted, isVisualTestAvailable) }
+                ]}>
+                  {getStepStatusText(process.visualTestCompleted, isVisualTestAvailable)}
+                </Text>
               </View>
             </View>
             <AntDesign name="right" size={16} color={theme.text + '80'} />
           </TouchableOpacity>
-          
+
           <View style={styles.stepDivider} />
-          
-          {/* Transit Department Verification */}
+
+          {/* Document Verification Step */}
           <TouchableOpacity 
-            style={styles.stepButton}
-            onPress={() => handleNavigateToStep(process.id, 'transitVerification')}
+            style={[
+              styles.stepButton,
+              !isDocumentVerificationAvailable && styles.stepButtonDisabled
+            ]}
+            onPress={() => isDocumentVerificationAvailable ? handleNavigateToStep(process.id, 'documentVerification') : null}
+            activeOpacity={isDocumentVerificationAvailable ? 0.7 : 1}
           >
             <View style={styles.stepRow}>
-              <View style={[styles.stepIndicator, process.transitVerificationCompleted ? styles.stepCompleted : styles.stepPending]}>
+              <View style={[
+                styles.stepIndicator, 
+                process.documentVerificationCompleted ? styles.stepCompleted : (isDocumentVerificationAvailable ? styles.stepAvailable : styles.stepLocked)
+              ]}>
+                {process.documentVerificationCompleted ? 
+                  <AntDesign name="check" size={14} color="#FFFFFF" /> : 
+                  <View style={styles.stepDot} />
+                }
+              </View>
+              <View style={styles.stepTextContainer}>
+                <Text style={[
+                  styles.stepText, 
+                  { color: isDocumentVerificationAvailable ? theme.text : theme.text + '80' }
+                ]}>
+                  {t('process.steps.documentVerification')}
+                </Text>
+                <Text style={[
+                  styles.stepDescription, 
+                  { color: isDocumentVerificationAvailable ? theme.text + '99' : theme.text + '60' }
+                ]}>
+                  {t('process.steps.documentVerificationDescription')}
+                </Text>
+                <Text style={[
+                  styles.stepStatus, 
+                  { color: getStepStatusColor(process.documentVerificationCompleted, isDocumentVerificationAvailable) }
+                ]}>
+                  {getStepStatusText(process.documentVerificationCompleted, isDocumentVerificationAvailable)}
+                </Text>
+              </View>
+            </View>
+            <AntDesign 
+              name="right" 
+              size={16} 
+              color={isDocumentVerificationAvailable ? theme.text + '80' : theme.text + '40'} 
+            />
+          </TouchableOpacity>
+
+          <View style={styles.stepDivider} />
+
+          {/* Transit Department Verification */}
+          <TouchableOpacity 
+            style={[
+              styles.stepButton,
+              !isTransitVerificationAvailable && styles.stepButtonDisabled
+            ]}
+            onPress={() => isTransitVerificationAvailable ? handleNavigateToStep(process.id, 'transitVerification') : null}
+            activeOpacity={isTransitVerificationAvailable ? 0.7 : 1}
+          >
+            <View style={styles.stepRow}>
+              <View style={[
+                styles.stepIndicator, 
+                process.transitVerificationCompleted ? styles.stepCompleted : (isTransitVerificationAvailable ? styles.stepAvailable : styles.stepLocked)
+              ]}>
                 {process.transitVerificationCompleted ? 
                   <AntDesign name="check" size={14} color="#FFFFFF" /> : 
                   <View style={styles.stepDot} />
                 }
               </View>
               <View style={styles.stepTextContainer}>
-                <Text style={[styles.stepText, { color: theme.text }]}>{t('process.steps.transitVerification')}</Text>
-                <Text style={[styles.stepDescription, { color: theme.text + '99' }]}>{t('process.steps.transitVerificationDescription')}</Text>
+                <Text style={[
+                  styles.stepText, 
+                  { color: isTransitVerificationAvailable ? theme.text : theme.text + '80' }
+                ]}>
+                  {t('process.steps.transitVerification')}
+                </Text>
+                <Text style={[
+                  styles.stepDescription, 
+                  { color: isTransitVerificationAvailable ? theme.text + '99' : theme.text + '60' }
+                ]}>
+                  {t('process.steps.transitVerificationDescription')}
+                </Text>
+                <Text style={[
+                  styles.stepStatus, 
+                  { color: getStepStatusColor(process.transitVerificationCompleted, isTransitVerificationAvailable) }
+                ]}>
+                  {getStepStatusText(process.transitVerificationCompleted, isTransitVerificationAvailable)}
+                </Text>
               </View>
             </View>
-            <AntDesign name="right" size={16} color={theme.text + '80'} />
+            <AntDesign 
+              name="right" 
+              size={16} 
+              color={isTransitVerificationAvailable ? theme.text + '80' : theme.text + '40'} 
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -339,9 +458,9 @@ export default function Home() {
   const renderProcessList = () => (
     <SafeAreaView style={[styles.safeContainer, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
-      
+
       <WelcomeHeader />
-      
+
       <FlatList
         data={completedProcesses}
         renderItem={renderProcessItem}
@@ -436,10 +555,10 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 80,
   },
   processCardContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
     borderRadius: 16,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -519,14 +638,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   processStepsSection: {
-    padding: 20,
-    marginTop: 10,
-    paddingBottom: 40,
+    padding: 16,
+    marginTop: 5,
+    paddingBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16,
+    textAlign: 'center',
   },
   stepsCard: {
     borderRadius: 16,
@@ -554,6 +673,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
   },
+  stepButtonDisabled: {
+    opacity: 0.8,
+  },
   stepDivider: {
     height: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.06)',
@@ -561,7 +683,7 @@ const styles = StyleSheet.create({
   },
   stepRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
   },
   stepIndicator: {
@@ -571,6 +693,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    marginTop: 2,
   },
   stepTextContainer: {
     flex: 1,
@@ -584,6 +707,12 @@ const styles = StyleSheet.create({
   stepCompleted: {
     backgroundColor: '#34C759',
   },
+  stepAvailable: {
+    backgroundColor: '#007AFF',
+  },
+  stepLocked: {
+    backgroundColor: 'rgba(100, 100, 100, 0.5)',
+  },
   stepPending: {
     backgroundColor: 'rgba(100, 100, 100, 0.5)',
   },
@@ -594,6 +723,12 @@ const styles = StyleSheet.create({
   },
   stepDescription: {
     fontSize: 14,
+    marginBottom: 4,
+  },
+  stepStatus: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 2,
   },
   stepsHelp: {
     textAlign: 'center',
@@ -609,4 +744,4 @@ const styles = StyleSheet.create({
     width: 120,
     height: 60,
   },
-}); 
+});

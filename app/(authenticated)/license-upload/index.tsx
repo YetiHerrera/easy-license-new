@@ -19,12 +19,12 @@ interface LicensePhoto {
 export default function LicenseUpload() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
-  
+
   const [licensePhotos, setLicensePhotos] = useState<LicensePhoto[]>([
     { type: 'front' },
     { type: 'back' }
   ]);
-  
+
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function LicenseUpload() {
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync(options);
-      
+
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setLicensePhotos(prev => {
           return prev.map(photo => 
@@ -124,7 +124,7 @@ export default function LicenseUpload() {
       ]
     );
   };
-  
+
   const canContinueWithLicense = () => {
     return licensePhotos.every(photo => photo.imageUri);
   };
@@ -146,16 +146,16 @@ export default function LicenseUpload() {
           headerStyle: { backgroundColor: theme.background },
         }}
       />
-      
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text variant="title" style={[styles.title, { color: theme.primaryTitles }]}>
           {t('licenseUpload.title')}
         </Text>
-        
+
         <Text variant="body" style={[styles.subtitle, { color: theme.text }]}>
           {t('licenseUpload.subtitle')}
         </Text>
-        
+
         <View style={[styles.optionalBanner, { backgroundColor: theme.formInputBackground }]}>
           <FontAwesome name="info-circle" size={20} color={theme.secondary} />
           <Text variant="body" style={[styles.optionalText, { color: theme.text }]}>
@@ -170,7 +170,7 @@ export default function LicenseUpload() {
           >
             {t('licenseUpload.previousLicense')}
           </Text>
-          
+
           <View style={styles.photoTypeContainer}>
             {licensePhotos.map((photo) => (
               <View key={photo.type} style={styles.photoTypeSection}>
@@ -180,7 +180,7 @@ export default function LicenseUpload() {
                 >
                   {t(`licenseUpload.${photo.type}Side`)}
                 </Text>
-                
+
                 <Pressable 
                   style={[
                     styles.photoUploadContainer, 

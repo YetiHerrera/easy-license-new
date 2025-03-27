@@ -53,6 +53,7 @@ export interface CompletedProcess extends ProcessData {
   amount: number;
   estimatedDeliveryDate: Date;
   visualTestCompleted?: boolean;
+  documentVerificationCompleted?: boolean;
   transitVerificationCompleted?: boolean;
   testResults?: {
     colorblind?: TestResult;
@@ -75,7 +76,7 @@ interface DataContextType {
   // Completed processes methods
   addCompletedProcess: (amount: number) => Promise<string>;
   updateCompletedProcessStatus: (id: string, status: 'pending' | 'processing' | 'completed') => Promise<void>;
-  updateProcessVerificationStep: (id: string, step: 'visualTest' | 'transitVerification', completed: boolean) => Promise<CompletedProcess | undefined>;
+  updateProcessVerificationStep: (id: string, step: 'visualTest' | 'documentVerification' | 'transitVerification', completed: boolean) => Promise<CompletedProcess | undefined>;
   saveTestResults: (id: string, testType: 'colorblind' | 'depthPerception' | 'myopia', results: TestResult) => Promise<void>;
   // Helper methods
   resetProcessData: () => Promise<void>;
@@ -141,12 +142,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         const savedProcessData = await AsyncStorage.getItem(PROCESS_DATA_KEY);
         if (savedProcessData) {
           const parsedData = JSON.parse(savedProcessData);
-          
+
           // Convert string date back to Date object
           if (parsedData.licenseInformation?.bornDate) {
             parsedData.licenseInformation.bornDate = new Date(parsedData.licenseInformation.bornDate);
           }
-          
+
           setProcessData(parsedData);
         }
 
@@ -154,14 +155,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         const savedCompletedProcesses = await AsyncStorage.getItem(COMPLETED_PROCESSES_KEY);
         if (savedCompletedProcesses) {
           const parsedProcesses = JSON.parse(savedCompletedProcesses);
-          
+
           // Convert string dates back to Date objects
           parsedProcesses.forEach((process: CompletedProcess) => {
             process.licenseInformation.bornDate = new Date(process.licenseInformation.bornDate);
             process.paymentDate = new Date(process.paymentDate);
             process.estimatedDeliveryDate = new Date(process.estimatedDeliveryDate);
           });
-          
+
           setCompletedProcesses(parsedProcesses);
         }
       } catch (error) {
@@ -230,14 +231,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     try {
       // Generate a unique ID
       const id = Date.now().toString();
-      
+
       // Set payment date to now
       const paymentDate = new Date();
-      
+
       // Set estimated delivery date to 14 days from now
       const estimatedDeliveryDate = new Date();
       estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 14);
-      
+
       // Create the completed process
       const completedProcess: CompletedProcess = {
         ...processData,
@@ -247,19 +248,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         amount,
         estimatedDeliveryDate,
         visualTestCompleted: false,
+        documentVerificationCompleted: false,
         transitVerificationCompleted: false,
       };
-      
+
       // Add to the list
       const updatedProcesses = [...completedProcesses, completedProcess];
       setCompletedProcesses(updatedProcesses);
-      
+
       // Save to storage
       await AsyncStorage.setItem(COMPLETED_PROCESSES_KEY, JSON.stringify(updatedProcesses));
-      
+
       // Reset current process data
       await resetProcessData();
-      
+
       return id;
     } catch (error) {
       console.error('Error adding completed process:', error);
@@ -276,7 +278,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
         return process;
       });
-      
+
       setCompletedProcesses(updatedProcesses);
       await AsyncStorage.setItem(COMPLETED_PROCESSES_KEY, JSON.stringify(updatedProcesses));
     } catch (error) {
@@ -285,43 +287,46 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Update a verification step of a process
-  const updateProcessVerificationStep = async (id: string, step: 'visualTest' | 'transitVerification', completed: boolean) => {
+  const updateProcessVerificationStep = async (id: string, step: 'visualTest' | 'documentVerification' | 'transitVerification', completed: boolean) => {
     try {
       console.log(`Updating ${step} to ${completed} for process ${id}`);
       console.log('Current processes:', completedProcesses);
-      
+
       const updatedProcesses = completedProcesses.map(process => {
         if (process.id === id) {
           console.log(`Found process to update:`, process);
-          
+
           let updatedProcess;
           if (step === 'visualTest') {
             // For visual test, we need to check if all tests are completed
             const hasAllTestResults = process.testResults?.colorblind &&
                                     process.testResults?.depthPerception &&
                                     process.testResults?.myopia;
-            
-            // Only mark as completed if all tests are done
+
+            // If we're marking as completed, check if all tests are done
+            // If we're marking as not completed, allow it regardless
             updatedProcess = { 
               ...process, 
-              visualTestCompleted: completed && hasAllTestResults ? true : process.visualTestCompleted 
+              visualTestCompleted: completed ? hasAllTestResults : false 
             };
+          } else if (step === 'documentVerification') {
+            updatedProcess = { ...process, documentVerificationCompleted: completed };
           } else {
             updatedProcess = { ...process, transitVerificationCompleted: completed };
           }
-          
+
           console.log(`Updated process:`, updatedProcess);
           return updatedProcess;
         }
         return process;
       });
-      
+
       console.log('Setting updated processes');
       setCompletedProcesses(updatedProcesses);
-      
+
       console.log('Saving to AsyncStorage');
       await AsyncStorage.setItem(COMPLETED_PROCESSES_KEY, JSON.stringify(updatedProcesses));
-      
+
       console.log('Update complete');
       return updatedProcesses.find(p => p.id === id);
     } catch (error) {
@@ -339,22 +344,23 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             ...(process.testResults || {}),
             [testType]: results
           };
-          
+
           // Check if all tests are completed after this update
           const hasAllTests = updatedTestResults.colorblind &&
                             updatedTestResults.depthPerception &&
                             updatedTestResults.myopia;
-          
+
           return { 
             ...process, 
             testResults: updatedTestResults,
             // Automatically mark visual test as completed if all tests are done
-            visualTestCompleted: hasAllTests ? true : process.visualTestCompleted
+            // This allows the visual test to be marked as completed automatically when all tests are done
+            visualTestCompleted: hasAllTests
           };
         }
         return process;
       });
-      
+
       setCompletedProcesses(updatedProcesses);
       await AsyncStorage.setItem(COMPLETED_PROCESSES_KEY, JSON.stringify(updatedProcesses));
     } catch (error) {
@@ -379,12 +385,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setUserProfile(initialUserProfile);
       setProcessData(initialProcessData);
       setCompletedProcesses([]);
-      
+
       // Clear AsyncStorage
       await AsyncStorage.removeItem(USER_PROFILE_KEY);
       await AsyncStorage.removeItem(PROCESS_DATA_KEY);
       await AsyncStorage.removeItem(COMPLETED_PROCESSES_KEY);
-      
+
       console.log('All user data has been erased on logout');
     } catch (error) {
       console.error('Error during logout:', error);
