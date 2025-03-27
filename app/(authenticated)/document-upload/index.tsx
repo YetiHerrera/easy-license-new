@@ -60,8 +60,7 @@ export default function DocumentUpload() {
     }
 
     const options: ImagePicker.ImagePickerOptions = {
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      mediaTypes: ['images'],
       aspect: [4, 3],
       quality: 0.8,
     };
@@ -103,8 +102,7 @@ export default function DocumentUpload() {
 
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        mediaTypes: ['images'],
         aspect: [4, 3],
         quality: 0.8,
       });

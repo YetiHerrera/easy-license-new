@@ -20,6 +20,10 @@
       "ios": {
         "ascAppId": "6743701784"
       }
+      ,
+      "android": {
+        "serviceAccountKeyPath": "/Users/yetiherrera/Documents/projects/easylicence/keys/easy-license-454922-588d453d6c47.json"
+      }
     }
   }
 }
