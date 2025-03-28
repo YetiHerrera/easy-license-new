@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useColorScheme, StatusBar, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useColorScheme, StatusBar, ScrollView, Animated, BackHandler, Platform } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useData } from '@/contexts/DataContext';
 import { Colors } from '@/constants/Colors';
@@ -73,6 +73,18 @@ export default function VisualTest() {
     return () => clearTimeout(refreshTimer);
   }, []);
 
+  // Handle Android back button
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+        handleGoBack();
+        return true; // Prevent default behavior
+      });
+
+      return () => backHandler.remove();
+    }
+  }, []);
+
   const handleGoBack = () => {
     // Always navigate to the home screen
     router.replace('/(authenticated)/home');
@@ -135,7 +147,7 @@ export default function VisualTest() {
           title: t('process.steps.visualTest'),
           headerShadowVisible: false,
           headerStyle: { backgroundColor: theme.background },
-          gestureEnabled: true,
+          gestureEnabled: false,
           gestureDirection: 'horizontal',
           headerLeft: () => (
             <TouchableOpacity onPress={handleGoBack}>

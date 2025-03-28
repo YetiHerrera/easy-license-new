@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -18,17 +18,49 @@ export default function LicenseInformation() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   const { processData, updateLicenseInformation } = useData();
-  
-  const [dpi, setDpi] = useState(processData.licenseInformation.dpi || '');
-  const [names, setNames] = useState(processData.licenseInformation.names || '');
-  const [lastNames, setLastNames] = useState(processData.licenseInformation.lastNames || '');
-  const [licenseType, setLicenseType] = useState<LicenseType>(processData.licenseInformation.licenseType || 'unselected');
-  const [renewalYears, setRenewalYears] = useState(processData.licenseInformation.renewalYears || 'unselected');
+
+  const [dpi, setDpiState] = useState(processData.licenseInformation.dpi || '');
+  const [names, setNamesState] = useState(processData.licenseInformation.names || '');
+  const [lastNames, setLastNamesState] = useState(processData.licenseInformation.lastNames || '');
+  const [licenseType, setLicenseTypeState] = useState<LicenseType>(processData.licenseInformation.licenseType || 'unselected');
+  const [renewalYears, setRenewalYearsState] = useState(processData.licenseInformation.renewalYears || 'unselected');
   const [bornDate, setBornDate] = useState(processData.licenseInformation.bornDate || new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showLicenseTypePicker, setShowLicenseTypePicker] = useState(false);
   const [showRenewalYearsPicker, setShowRenewalYearsPicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Wrapper functions to clear errors when field values change
+  const setDpi = (value: string) => {
+    setDpiState(value);
+    if (errors.dpi) {
+      setErrors({...errors, dpi: ''});
+    }
+  };
+
+  const setNames = (value: string) => {
+    setNamesState(value);
+    if (errors.names) {
+      setErrors({...errors, names: ''});
+    }
+  };
+
+  const setLastNames = (value: string) => {
+    setLastNamesState(value);
+    if (errors.lastNames) {
+      setErrors({...errors, lastNames: ''});
+    }
+  };
+
+  const setLicenseType = (value: LicenseType) => {
+    setLicenseTypeState(value);
+    // No specific error field for licenseType in the current implementation
+  };
+
+  const setRenewalYears = (value: string) => {
+    setRenewalYearsState(value);
+    // No specific error field for renewalYears in the current implementation
+  };
 
   // Load saved license information from context
   useEffect(() => {
@@ -53,7 +85,7 @@ export default function LicenseInformation() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     // Validate DPI/Passport (should be 13 digits for DPI or 8-12 characters for passport)
     if (!dpi) {
       newErrors.dpi = t('licenseInformation.dpiRequired');
@@ -64,33 +96,36 @@ export default function LicenseInformation() {
     } else {
       newErrors.dpi = t('licenseInformation.invalidDpi');
     }
-    
+
     // Validate Names
     if (!names.trim()) {
       newErrors.names = t('licenseInformation.nameRequired');
     }
-    
+
     // Validate Last Names
     if (!lastNames.trim()) {
       newErrors.lastNames = t('licenseInformation.lastNameRequired');
     }
-    
+
     // Validate Date of Birth (user must be at least 18 years old)
     const today = new Date();
     const age = today.getFullYear() - bornDate.getFullYear();
     const monthDiff = today.getMonth() - bornDate.getMonth();
-    
+
     if (age < 18 || (age === 18 && monthDiff < 0) || 
         (age === 18 && monthDiff === 0 && today.getDate() < bornDate.getDate())) {
       newErrors.bornDate = t('licenseInformation.ageRestriction');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
     if (validateForm()) {
+      // Dismiss keyboard before navigation
+      Keyboard.dismiss();
+
       // Save license information to context
       await updateLicenseInformation({
         dpi,
@@ -100,7 +135,7 @@ export default function LicenseInformation() {
         renewalYears,
         bornDate,
       });
-      
+
       // Navigate to next step
       router.push('/(authenticated)/process-review/license-delivery-address' as any);
     }
@@ -359,7 +394,7 @@ export default function LicenseInformation() {
           headerTintColor: theme.text,
         }}
       />
-      
+
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -377,7 +412,7 @@ export default function LicenseInformation() {
             <Text style={[styles.subtitle, { color: theme.text }]}>
               {t('licenseInformation.subtitle')}
             </Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: theme.text }]}>
                 {t('licenseInformation.dpi')}
@@ -424,7 +459,10 @@ export default function LicenseInformation() {
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
                 }]}
-                onPress={() => setShowLicenseTypePicker(true)}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setShowLicenseTypePicker(true);
+                }}
               >
                 <Text style={[
                   styles.pickerButtonText, 
@@ -450,7 +488,10 @@ export default function LicenseInformation() {
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
                 }]}
-                onPress={() => setShowRenewalYearsPicker(true)}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setShowRenewalYearsPicker(true);
+                }}
               >
                 <Text style={[
                   styles.pickerButtonText, 
@@ -476,7 +517,10 @@ export default function LicenseInformation() {
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
                 }]}
-                onPress={() => setShowDatePicker(true)}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setShowDatePicker(true);
+                }}
               >
                 <Text style={[styles.pickerButtonText, { color: theme.text }]}>
                   {bornDate.toLocaleDateString()}

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme, FlatList, StatusBar, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme, FlatList, StatusBar, Platform, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -94,10 +94,23 @@ export default function Home() {
         params: { id: processId }
       });
     } else if (step === 'documentVerification') {
-      router.push({
-        pathname: '/document-upload',
-        params: { id: processId }
-      });
+      // Find the process to check if document verification is already completed
+      const process = completedProcesses.find(p => p.id === processId);
+
+      if (process && process.documentVerificationCompleted) {
+        // If document verification is already completed, show an alert instead of navigating
+        Alert.alert(
+          t('documentUpload.alreadyCompletedTitle'),
+          t('documentUpload.alreadyCompletedMessage'),
+          [{ text: t('common.ok') }]
+        );
+      } else {
+        // If not completed, navigate to document upload
+        router.push({
+          pathname: '/document-upload',
+          params: { id: processId }
+        });
+      }
     } else {
       router.push({
         pathname: '/process-steps/transit-verification',

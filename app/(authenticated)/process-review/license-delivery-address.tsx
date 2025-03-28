@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -27,15 +27,49 @@ export default function LicenseDeliveryAddress() {
   const colorScheme = useColorScheme() || 'light';
   const theme = Colors[colorScheme];
   const { processData, updateDeliveryAddress } = useData();
-  
-  const [streetAddress, setStreetAddress] = useState(processData.deliveryAddress.streetAddress || '');
-  const [apartment, setApartment] = useState(processData.deliveryAddress.apartment || '');
-  const [city, setCity] = useState(processData.deliveryAddress.city || '');
-  const [state, setState] = useState(processData.deliveryAddress.state || '');
-  const [zipCode, setZipCode] = useState(processData.deliveryAddress.zipCode || '');
+
+  const [streetAddress, setStreetAddressState] = useState(processData.deliveryAddress.streetAddress || '');
+  const [apartment, setApartmentState] = useState(processData.deliveryAddress.apartment || '');
+  const [city, setCityState] = useState(processData.deliveryAddress.city || '');
+  const [state, setStateState] = useState(processData.deliveryAddress.state || '');
+  const [zipCode, setZipCodeState] = useState(processData.deliveryAddress.zipCode || '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showStatePicker, setShowStatePicker] = useState(false);
   const [showCityPicker, setShowCityPicker] = useState(false);
+
+  // Wrapper functions to clear errors when field values change
+  const setStreetAddress = (value: string) => {
+    setStreetAddressState(value);
+    if (errors.streetAddress) {
+      setErrors({...errors, streetAddress: ''});
+    }
+  };
+
+  const setApartment = (value: string) => {
+    setApartmentState(value);
+    // No specific error field for apartment in the current implementation
+  };
+
+  const setCity = (value: string) => {
+    setCityState(value);
+    if (errors.city) {
+      setErrors({...errors, city: ''});
+    }
+  };
+
+  const setState = (value: string) => {
+    setStateState(value);
+    if (errors.state) {
+      setErrors({...errors, state: ''});
+    }
+  };
+
+  const setZipCode = (value: string) => {
+    setZipCodeState(value);
+    if (errors.zipCode) {
+      setErrors({...errors, zipCode: ''});
+    }
+  };
 
   // Load saved delivery address from context
   useEffect(() => {
@@ -50,35 +84,38 @@ export default function LicenseDeliveryAddress() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     // Validate Street Address
     if (!streetAddress.trim()) {
       newErrors.streetAddress = t('licenseDelivery.streetAddressRequired');
     }
-    
+
     // Validate City
     if (!city.trim()) {
       newErrors.city = t('licenseDelivery.cityRequired');
     }
-    
+
     // Validate State
     if (!state.trim()) {
       newErrors.state = t('licenseDelivery.stateRequired');
     }
-    
+
     // Validate ZIP Code (US format: 5 digits or 5+4)
     if (!zipCode.trim()) {
       newErrors.zipCode = t('licenseDelivery.zipCodeRequired');
     } else if (!/^\d{5}(-\d{4})?$/.test(zipCode)) {
       newErrors.zipCode = t('licenseDelivery.invalidZipCode');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
     if (validateForm()) {
+      // Dismiss keyboard before navigation
+      Keyboard.dismiss();
+
       // Save delivery address to context
       await updateDeliveryAddress({
         streetAddress,
@@ -87,7 +124,7 @@ export default function LicenseDeliveryAddress() {
         state,
         zipCode,
       });
-      
+
       // Navigate to next step
       router.push('/(authenticated)/process-review/process-type' as any);
     }
@@ -174,7 +211,7 @@ export default function LicenseDeliveryAddress() {
           headerTintColor: theme.text,
         }}
       />
-      
+
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -192,7 +229,7 @@ export default function LicenseDeliveryAddress() {
             <Text style={[styles.subtitle, { color: theme.text }]}>
               {t('licenseDelivery.subtitle')}
             </Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: theme.text }]}>
                 {t('licenseDelivery.state')}
@@ -202,7 +239,10 @@ export default function LicenseDeliveryAddress() {
                   backgroundColor: theme.formInputBackground,
                   borderColor: theme.formInputBorder,
                 }]}
-                onPress={() => setShowStatePicker(true)}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setShowStatePicker(true);
+                }}
               >
                 <Text style={[styles.pickerButtonText, { color: theme.text }]}>
                   {state || t('licenseDelivery.statePlaceholder')}

@@ -58,7 +58,8 @@ export default {
     back: 'Atrás',
     continue: 'Continuar',
     confirm: 'Confirmar',
-    goBack: 'Regresar'
+    goBack: 'Regresar',
+    ok: 'Aceptar'
   },
   home: {
     emptyState: {
@@ -228,7 +229,9 @@ export default {
     dpiFullName: 'Documento Personal de Identidad',
     currentLicenseQuestion: '¿Tienes tu licencia anterior?',
     delete: 'Eliminar documento',
-    submit: 'Enviar documentos'
+    submit: 'Enviar documentos',
+    alreadyCompletedTitle: 'Documentos Ya Verificados',
+    alreadyCompletedMessage: 'Tus documentos ya han sido cargados y verificados con éxito. No necesitas cargarlos nuevamente.'
   },
   reviewDocuments: {
     title: 'Revisar Documentos',
@@ -276,7 +279,9 @@ export default {
     startRecording: 'Iniciar grabación',
     finishRecording: 'Finalizar grabación',
     verifyRecording: 'Enviar verificación',
-    verificationSuccessMessage: 'Tu identidad prueba de verificación fue enviada con éxito y sera revisada por nuestros agentes.'
+    verificationSuccessMessage: 'Tu identidad prueba de verificación fue enviada con éxito y sera revisada por nuestros agentes.',
+    successTitle: 'Verificación Completada',
+    successMessage: 'Tus documentos han sido verificados con éxito.'
   },
   licenseInformation: {
     title: 'Información de Licencia',

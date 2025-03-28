@@ -1,4 +1,4 @@
-import { View, StyleSheet, useColorScheme, Pressable, ScrollView, KeyboardAvoidingView, Platform, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, useColorScheme, Pressable, ScrollView, KeyboardAvoidingView, Platform, TextInput, Alert, ActivityIndicator, Keyboard } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Text } from '@/components/Text';
 import { Colors } from '@/constants/Colors';
@@ -200,6 +200,9 @@ export default function Payment() {
   // Handle form submission
   const handleSubmit = async () => {
     if (validateForm()) {
+      // Dismiss keyboard before processing
+      Keyboard.dismiss();
+
       setIsProcessing(true);
 
       try {
@@ -257,6 +260,27 @@ export default function Payment() {
       if (errors.expiryDate) {
         setErrors({...errors, expiryDate: ''});
       }
+    }
+  };
+
+  // Handle changes in CVV
+  const handleCvvChange = (text: string) => {
+    const numericText = text.replace(/[^\d]/g, '');
+    setCvv(numericText);
+
+    // Clear error if it exists
+    if (errors.cvv) {
+      setErrors({...errors, cvv: ''});
+    }
+  };
+
+  // Handle changes in cardholder name
+  const handleCardholderNameChange = (text: string) => {
+    setCardholderName(text);
+
+    // Clear error if it exists
+    if (errors.cardholderName) {
+      setErrors({...errors, cardholderName: ''});
     }
   };
 
@@ -401,10 +425,7 @@ export default function Payment() {
                   </Text>
                   <FormInput
                     value={cvv}
-                    onChangeText={(text) => {
-                      setCvv(text.replace(/[^\d]/g, ''));
-                      if (errors.cvv) setErrors({...errors, cvv: ''});
-                    }}
+                    onChangeText={handleCvvChange}
                     placeholder="123"
                     keyboardType="numeric"
                     error={errors.cvv}
@@ -418,10 +439,7 @@ export default function Payment() {
                 </Text>
                 <FormInput
                   value={cardholderName}
-                  onChangeText={(text) => {
-                    setCardholderName(text);
-                    if (errors.cardholderName) setErrors({...errors, cardholderName: ''});
-                  }}
+                  onChangeText={handleCardholderNameChange}
                   placeholder={t('payment.cardholderNamePlaceholder')}
                   error={errors.cardholderName}
                 />

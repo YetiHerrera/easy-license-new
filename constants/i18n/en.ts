@@ -58,7 +58,8 @@ export default {
     back: 'Back',
     continue: 'Continue',
     confirm: 'Confirm',
-    goBack: 'Go Back'
+    goBack: 'Go Back',
+    ok: 'OK'
   },
   home: {
     emptyState: {
@@ -228,7 +229,9 @@ export default {
     dpiFullName: 'Personal Identification Document',
     currentLicenseQuestion: 'Do you have your previous license?',
     delete: 'Delete document',
-    submit: 'Submit documents'
+    submit: 'Submit documents',
+    alreadyCompletedTitle: 'Documents Already Verified',
+    alreadyCompletedMessage: 'Your documents have already been uploaded and verified successfully. You do not need to upload them again.'
   },
   reviewDocuments: {
     title: 'Review Documents',
@@ -276,7 +279,9 @@ export default {
     startRecording: 'Start recording',
     finishRecording: 'Finish recording',
     verifyRecording: 'Submit verification',
-    verificationSuccessMessage: 'Your identity verification has been sent successfully and will be reviewed by our agents.'
+    verificationSuccessMessage: 'Your identity verification has been sent successfully and will be reviewed by our agents.',
+    successTitle: 'Verification Complete',
+    successMessage: 'Your documents have been successfully verified.'
   },
   licenseInformation: {
     title: 'License Information',
