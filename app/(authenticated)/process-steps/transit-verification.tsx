@@ -29,9 +29,13 @@ export default function TransitVerification() {
   if (!process) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-        <Text style={[styles.errorText, { color: theme.text }]}>Process not found</Text>
+        <Text style={[styles.errorText, { color: theme.text }]}>
+          {t('process.transitVerification.error.notFound')}
+        </Text>
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <Text style={[styles.backButtonText, { color: theme.primary }]}>Go Back</Text>
+          <Text style={[styles.backButtonText, { color: theme.primary }]}>
+            {t('common.goBack')}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -45,7 +49,9 @@ export default function TransitVerification() {
         <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.text }]}>{t('process.steps.transitVerification')}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>
+          {t('process.transitVerification.title')}
+        </Text>
         <View style={styles.placeholder} />
       </View>
       
@@ -55,56 +61,60 @@ export default function TransitVerification() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.description, { color: theme.text }]}>
-          This verification is performed by the Transit Department. Check back later for updates.
+          {t('process.transitVerification.description')}
         </Text>
         
         <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>Department Information</Text>
+          <Text style={[styles.infoTitle, { color: theme.text }]}>
+            {t('process.transitVerification.departmentInfo.title')}
+          </Text>
           <View style={styles.departmentInfo}>
             <MaterialIcons name="location-on" size={20} color={theme.text} />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Guatemala City Central Office
+              {t('process.transitVerification.departmentInfo.location')}
             </Text>
           </View>
           <View style={styles.departmentInfo}>
             <MaterialIcons name="access-time" size={20} color={theme.text} />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Mon-Fri: 8:00 AM - 4:00 PM
+              {t('process.transitVerification.departmentInfo.hours')}
             </Text>
           </View>
           <View style={styles.departmentInfo}>
             <MaterialIcons name="phone" size={20} color={theme.text} />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              +502 2220-0000
+              {t('process.transitVerification.departmentInfo.phone')}
             </Text>
           </View>
         </View>
         
         <View style={[styles.infoBox, { backgroundColor: theme.formInputBackground }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>Required Documents</Text>
+          <Text style={[styles.infoTitle, { color: theme.text }]}>
+            {t('process.transitVerification.requiredDocuments.title')}
+          </Text>
           <View style={styles.documentItem}>
             <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Original DPI or Passport
+              {t('process.transitVerification.requiredDocuments.dpi')}
             </Text>
           </View>
           <View style={styles.documentItem}>
             <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Proof of Payment
+              {t('process.transitVerification.requiredDocuments.payment')}
             </Text>
           </View>
           <View style={styles.documentItem}>
             <Ionicons name="checkmark-circle" size={20} color="#34C759" />
             <Text style={[styles.infoText, { color: theme.text }]}>
-              Process Reference Number
+              {t('process.transitVerification.requiredDocuments.reference')}
             </Text>
           </View>
         </View>
         
         <View style={styles.referenceContainer}>
           <Text style={[styles.referenceLabel, { color: theme.text }]}>
-            Process Reference Number:
+            {t('process.referenceNumber')}:
           </Text>
           <Text style={[styles.referenceValue, { color: theme.text }]}>
             {process.id}
@@ -115,7 +125,7 @@ export default function TransitVerification() {
           <View style={[styles.statusBadge, { backgroundColor: theme.formInputBackground }]}>
             <MaterialIcons name="timelapse" size={20} color={theme.primary} />
             <Text style={[styles.statusText, { color: theme.text }]}>
-              Under review by the Transit Department
+              {t('process.transitVerification.status.underReview')}
             </Text>
           </View>
         )}
@@ -123,7 +133,9 @@ export default function TransitVerification() {
         {process.transitVerificationCompleted && (
           <View style={[styles.completedBadge, { backgroundColor: '#34C759' }]}>
             <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.completedText}>Verification Completed</Text>
+            <Text style={styles.completedText}>
+              {t('process.transitVerification.status.completed')}
+            </Text>
           </View>
         )}
       </ScrollView>

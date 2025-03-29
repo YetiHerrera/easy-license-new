@@ -59,6 +59,7 @@ export default {
     continue: 'Continuar',
     confirm: 'Confirmar',
     goBack: 'Regresar',
+    goBackToHome: 'Volver al inicio',
     ok: 'Aceptar'
   },
   home: {
@@ -179,6 +180,29 @@ export default {
         failed: 'No Aprobado',
         skipped: 'Omitido'
       }
+    },
+    transitVerification: {
+      title: 'Verificación del Departamento de Tránsito',
+      description: 'Esta verificación es realizada por el Departamento de Tránsito. Vuelva más tarde para actualizaciones.',
+      departmentInfo: {
+        title: 'Información del Departamento',
+        location: 'Oficina Central Ciudad de Guatemala',
+        hours: 'Lun-Vie: 8:00 AM - 4:00 PM',
+        phone: '+502 2220-0000'
+      },
+      requiredDocuments: {
+        title: 'Documentos Requeridos',
+        dpi: 'DPI Original o Pasaporte',
+        payment: 'Comprobante de Pago',
+        reference: 'Número de Referencia del Proceso'
+      },
+      status: {
+        underReview: 'En revisión por el Departamento de Tránsito',
+        completed: 'Verificación Completada'
+      },
+      error: {
+        notFound: 'Proceso no encontrado'
+      }
     }
   },
   userInformation: {
@@ -187,7 +211,7 @@ export default {
     documentTypes: {
       identity: 'Documento de identidad',
       currentLicense: 'Licencia Actual',
-      addressProof: 'Comprobante de domicilio'
+      addressProof: 'Dirección de entrega',
     },
     optional: '(opcional)',
     startProcess: 'Iniciar mi trámite',
@@ -197,14 +221,14 @@ export default {
     }
   },
   documentUpload: {
-    title: 'Tud Documentos',
+    title: 'Tus Documentos',
     subtitle: 'Sube los documentos requeridos para continuar con el proceso de renovación de tu licencia',
     uploadButton: 'Subir documento',
     uploadInstructions: 'Toca para subir o tomar una foto',
     documentTypes: {
       identity: 'Documento de identidad',
       currentLicense: 'Licencia Actual',
-      addressProof: 'Comprobante de domicilio',
+      addressProof: 'Dirección de entrega',
       passport: 'Pasaporte'
     },
     selectOption: 'Seleccionar opción',

@@ -59,6 +59,7 @@ export default {
     continue: 'Continue',
     confirm: 'Confirm',
     goBack: 'Go Back',
+    goBackToHome: 'Go back to home',
     ok: 'OK'
   },
   home: {
@@ -179,6 +180,29 @@ export default {
         failed: 'Failed',
         skipped: 'Skipped'
       }
+    },
+    transitVerification: {
+      title: 'Transit Department Verification',
+      description: 'This verification is performed by the Transit Department. Check back later for updates.',
+      departmentInfo: {
+        title: 'Department Information',
+        location: 'Guatemala City Central Office',
+        hours: 'Mon-Fri: 8:00 AM - 4:00 PM',
+        phone: '+502 2220-0000'
+      },
+      requiredDocuments: {
+        title: 'Required Documents',
+        dpi: 'Original DPI or Passport',
+        payment: 'Proof of Payment',
+        reference: 'Process Reference Number'
+      },
+      status: {
+        underReview: 'Under review by the Transit Department',
+        completed: 'Verification Completed'
+      },
+      error: {
+        notFound: 'Process not found'
+      }
     }
   },
   userInformation: {
@@ -187,7 +211,7 @@ export default {
     documentTypes: {
       identity: 'Identity document',
       currentLicense: 'Current License',
-      addressProof: 'Proof of address'
+      addressProof: 'Delivery address'
     },
     optional: '(optional)',
     startProcess: 'Start my process',
@@ -204,7 +228,7 @@ export default {
     documentTypes: {
       identity: 'Identity document',
       currentLicense: 'Current License',
-      addressProof: 'Proof of address',
+      addressProof: 'Delivery address',
       passport: 'Passport'
     },
     selectOption: 'Select Option',

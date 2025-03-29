@@ -451,7 +451,7 @@ export default function Payment() {
 
 
         {/* Payment Security Note */}
-        <View style={[styles.securityNote, { backgroundColor: `${theme.success}15` }]}>
+        <View style={[styles.securityNote, { }]}>
           <Ionicons name="shield-checkmark" size={18} color={theme.success} />
           <Text style={[styles.securityText, { color: theme.text }]}>
             {t('payment.securityNote')}
@@ -525,14 +525,14 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 10,
     paddingHorizontal: 20,
   },
   cardPreview: {
     height: 200,
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -633,11 +633,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   label: {
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 12,
+    marginBottom: 5,
     fontWeight: '600',
     letterSpacing: 0.3,
   },
@@ -658,12 +658,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    marginBottom: 20,
+    marginTop: 10,
     backgroundColor: 'rgba(2, 134, 74, 0.1)',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    marginHorizontal: 20,
   },
   securityText: {
     fontSize: 14,

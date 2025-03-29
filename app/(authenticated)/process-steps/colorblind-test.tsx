@@ -167,6 +167,10 @@ export default function ColorblindTest() {
     );
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <Stack.Screen
@@ -175,12 +179,17 @@ export default function ColorblindTest() {
           headerShadowVisible: false,
           headerStyle: { backgroundColor: theme.background },
           gestureEnabled: false,
-          headerLeft: () => null,
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleGoBack}>
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+          ),
           headerShown: false,
         }}
         listeners={{
           beforeRemove: (e) => {
             e.preventDefault();
+            handleGoBack();
           },
         }}
       />
@@ -192,6 +201,12 @@ export default function ColorblindTest() {
       >
         <View style={styles.innerContainer}>
           <View style={styles.header}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {t('process.visualTest.colorblind.title')}
+            </Text>
             <View style={styles.placeholder} />
           </View>
           
@@ -477,5 +492,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  backButton: {
+    padding: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 }); 

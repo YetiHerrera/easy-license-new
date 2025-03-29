@@ -217,6 +217,14 @@ export default function VisualTest() {
                     </Text>
                   )}
                 </View>
+
+                <TouchableOpacity 
+                  style={[styles.homeButton, { backgroundColor: theme.primary }]}
+                  onPress={() => router.replace('/(authenticated)/home')}
+                >
+                  <Ionicons name="home" size={24} color="#FFFFFF" />
+                  <Text style={styles.homeButtonText}>{t('common.goBackToHome')}</Text>
+                </TouchableOpacity>
               </>
             ) : null}
           </View>
@@ -616,5 +624,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginTop: 24,
+  },
+  homeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 24,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  homeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 }); 
